@@ -12,6 +12,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 function Copyright(props: any) {
   return (
@@ -51,8 +52,8 @@ export default function SignInSide() {
         <Grid
           item
           xs={false}
-          sm={4}
-          md={7}
+          sm={6}
+          md={8}
           sx={{
             backgroundImage:
               'url(https://source.unsplash.com/random?wallpapers)',
@@ -65,7 +66,7 @@ export default function SignInSide() {
             backgroundPosition: 'center'
           }}
         />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Grid item xs={12} sm={6} md={4} component={Paper} elevation={6} square>
           <Box
             sx={{
               my: 8,
@@ -126,7 +127,7 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link to="/sign-up" component={RouterLink} variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
