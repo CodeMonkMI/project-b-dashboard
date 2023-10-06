@@ -19,6 +19,7 @@ const Crypto = Loader(lazy(() => import('src/content/dashboards/Crypto')));
 
 // pages
 const Login = Loader(lazy(() => import('src/content/login/Login')));
+const SignUp = Loader(lazy(() => import('src/content/signUp/SignUp')));
 
 // Applications
 
@@ -62,6 +63,10 @@ const routes: RouteObject[] = [
       {
         path: '/login',
         element: <Login />
+      },
+      {
+        path: '/sign-up',
+        element: <SignUp />
       },
       {
         path: 'overview',
