@@ -18,7 +18,7 @@ const Loader = (Component) => (props) =>
 const Crypto = Loader(lazy(() => import('src/content/dashboards/Crypto')));
 
 // pages
-const Login = Loader(lazy(() => import('src/content/login/Login')));
+const SignIn = Loader(lazy(() => import('src/content/signIn/SignIn')));
 const SignUp = Loader(lazy(() => import('src/content/signUp/SignUp')));
 
 // Applications
@@ -61,8 +61,8 @@ const routes: RouteObject[] = [
         element: <Navigate to="/dashboards/crypto" replace />
       },
       {
-        path: '/login',
-        element: <Login />
+        path: '/sign-in',
+        element: <SignIn />
       },
       {
         path: '/sign-up',
