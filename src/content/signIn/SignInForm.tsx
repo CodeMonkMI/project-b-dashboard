@@ -7,26 +7,47 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useLoginMutation } from 'src/redux/features/auth/authApiSlice';
 
 // form values type
-interface FormValues {
+export interface SignInFormValues {
   username: string;
   password: string;
 }
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+
+  const [login, { isError, isLoading, isSuccess, error }] = useLoginMutation();
+
   const {
     control,
     handleSubmit,
     formState: { errors }
-  } = useForm<FormValues>();
+  } = useForm<SignInFormValues>();
 
-  const submitHandler = (data: FormValues) => {
-    console.log(data);
+  const submitHandler = (data: SignInFormValues) => {
+    login(data);
   };
+
+  useEffect(() => {
+    if (isError && !isLoading) {
+      console.log(error);
+    }
+  }, [isError, isLoading]);
+  useEffect(() => {
+    if (isSuccess && !isLoading) {
+      console.log('success');
+    }
+  }, [isError, isLoading]);
+
+  useEffect(() => {
+    if (isLoading) {
+      console.log('loading....');
+    }
+  }, [isLoading]);
 
   return (
     <>
