@@ -12,9 +12,10 @@ import Link from '@mui/material/Link';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useRegisterMutation } from 'src/redux/features/auth/authApiSlice';
 import { v4 } from 'uuid';
 
 // form values type
@@ -88,6 +89,10 @@ const BLOOD_GROUP_LIST: BloodListProps[] = [
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const navigate = useNavigate();
+  const [register, { isError, isLoading, isSuccess, error }] =
+    useRegisterMutation();
+
   const {
     control,
     handleSubmit,
@@ -95,8 +100,25 @@ const SignUpForm = () => {
   } = useForm<FormValues>();
 
   const submitHandler = (data: FormValues) => {
-    console.log(data);
+    register(data);
   };
+
+  useEffect(() => {
+    if (isError && !isLoading) {
+      console.log(error);
+    }
+  }, [isError, isLoading]);
+  useEffect(() => {
+    if (isSuccess && !isLoading) {
+      navigate('/dashboards');
+    }
+  }, [isError, isLoading]);
+
+  useEffect(() => {
+    if (isLoading) {
+      console.log('loading....');
+    }
+  }, [isLoading]);
 
   return (
     <div>

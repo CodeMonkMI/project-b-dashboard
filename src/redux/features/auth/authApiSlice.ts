@@ -6,28 +6,19 @@ export const authApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (data) => ({
-        url: '/register',
+        url: '/auth/sign-up',
         method: 'POST',
         body: data
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
+          const { token } = result.data.data;
 
-          localStorage.setItem(
-            'auth',
-            JSON.stringify({
-              accessToken: result.data.accessToken,
-              user: result.data.user
-            })
-          );
+          storeToken(token);
 
-          dispatch(
-            logIn({
-              accessToken: result.data.accessToken,
-              user: result.data.user
-            })
-          );
+          const user = getTokenData();
+          dispatch(logIn(user));
         } catch (err) {
           // do nothing
         }
