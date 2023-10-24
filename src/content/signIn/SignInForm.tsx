@@ -9,6 +9,7 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
 import { useLoginMutation } from 'src/redux/features/auth/authApiSlice';
 
 // form values type
@@ -19,7 +20,7 @@ export interface SignInFormValues {
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
+  const navigate = useNavigate();
   const [login, { isError, isLoading, isSuccess, error }] = useLoginMutation();
 
   const {
@@ -39,7 +40,7 @@ const SignInForm = () => {
   }, [isError, isLoading]);
   useEffect(() => {
     if (isSuccess && !isLoading) {
-      console.log('success');
+      navigate('/dashboards');
     }
   }, [isError, isLoading]);
 

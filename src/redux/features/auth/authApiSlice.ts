@@ -35,7 +35,7 @@ export const authApi = apiSlice.injectEndpoints({
     }),
     login: builder.mutation({
       query: (data) => ({
-        url: '/auth/login',
+        url: '/auth/sign-in',
         method: 'POST',
         body: data
       }),
@@ -43,9 +43,10 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
+          const { token } = result.data.data;
 
-          const { token } = result.data;
           storeToken(token);
+
           const user = getTokenData();
           dispatch(logIn(user));
         } catch (err) {

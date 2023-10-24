@@ -9,15 +9,16 @@ export const storeToken = (token: string): void => {
 export const getToken = (): string | undefined => {
   return localStorage.getItem('token');
 };
-
-export const getTokenData = () => {
-  const token = getToken();
-
+export const decodeToken = (token: string) => {
   try {
     return jwtDecode(token);
   } catch (e) {
     return {};
   }
+};
+export const getTokenData = () => {
+  const token = getToken();
+  return decodeToken(token);
 };
 
 export const removeToken = (): void => {
