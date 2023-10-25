@@ -2,7 +2,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -17,8 +21,15 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "react": ["./node_modules/@types/react"]
+      "react": [
+        "./node_modules/@types/react"
+      ],
+      "@mui/x-data-grid": [
+        "node_modules/@mui/x-data-grid"
+      ]
     }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

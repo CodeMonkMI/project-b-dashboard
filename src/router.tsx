@@ -21,8 +21,10 @@ const Crypto = Loader(lazy(() => import('src/content/dashboards/Crypto')));
 const SignIn = Loader(lazy(() => import('src/content/signIn/SignIn')));
 const SignUp = Loader(lazy(() => import('src/content/signUp/SignUp')));
 
-// Applications
+// dashboard
+const AllUsers = Loader(lazy(() => import('src/content/dashboards/Users')));
 
+// Applications
 const Messenger = Loader(
   lazy(() => import('src/content/applications/Messenger'))
 );
@@ -114,6 +116,10 @@ const routes: RouteObject[] = [
       {
         path: 'crypto',
         element: <Crypto />
+      },
+      {
+        path: 'users',
+        element: <AllUsers />
       },
       {
         path: 'messenger',
