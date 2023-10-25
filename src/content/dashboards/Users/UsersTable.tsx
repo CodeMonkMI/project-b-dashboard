@@ -1,5 +1,9 @@
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -12,7 +16,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import * as React from 'react';
-
+import { useGetUsersQuery } from 'src/redux/features/user/userApiSlice';
 interface Data {
   id: number | string | any;
   username: string;
@@ -20,10 +24,6 @@ interface Data {
   role: string;
   blood: string;
   createdAt: string;
-}
-
-function createData(data: Data): Data {
-  return data;
 }
 
 const rows = [
@@ -48,18 +48,6 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 }
 
 type Order = 'asc' | 'desc';
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
 
 interface HeadCell {
   disablePadding: boolean;
@@ -100,6 +88,12 @@ const headCells: readonly HeadCell[] = [
     label: 'Role'
   },
   {
+    id: 'createdAt',
+    numeric: false,
+    disablePadding: false,
+    label: 'createdAt'
+  },
+  {
     id: 'id',
     numeric: false,
     disablePadding: false,
@@ -120,14 +114,7 @@ interface EnhancedTableProps {
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort
-  } = props;
+  const { order, orderBy, onRequestSort } = props;
   const createSortHandler =
     (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
@@ -181,12 +168,41 @@ function EnhancedTableToolbar() {
     </Toolbar>
   );
 }
+
+interface USER_DATA_SERVER {
+  id: String;
+  username: String;
+  email: String;
+  createdAt: String;
+  Profile: {
+    firstName: String;
+    lastName: String;
+    displayName: String;
+    fatherName: String;
+    motherName: String;
+    address: String;
+    streetAddress: String;
+    upzila: String;
+    zila: String;
+    phoneNo: String;
+    lastDonation: String;
+    bloodGroup: String;
+    image: String;
+  };
+  role: {
+    name: String;
+    role: String;
+  };
+}
+
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('id');
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const { data: userData, isLoading, isSuccess, isError } = useGetUsersQuery();
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -242,14 +258,25 @@ export default function EnhancedTable() {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-  const visibleRows = React.useMemo(() => {
+  const visibleRows: Data[] = React.useMemo<Data[]>(() => {
+    if (isLoading || isError) return [];
     return (
-      rows
+      userData.data
         //   .sort(getComparator(order, orderBy))
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+        .map((a: USER_DATA_SERVER) => {
+          return {
+            id: a.id,
+            username: a.username,
+            email: a.email,
+            role: a.role.name,
+            blood: a.Profile.bloodGroup,
+            createdAt: a.createdAt
+          };
+        })
     );
-  }, [order, orderBy, page, rowsPerPage]);
-
+  }, [order, orderBy, page, rowsPerPage, userData]);
+  console.log(visibleRows);
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -286,13 +313,23 @@ export default function EnhancedTable() {
                     sx={{ cursor: 'pointer' }}
                   >
                     <TableCell id={labelId} scope="row" align="center">
-                      {row.id}
+                      {index + 1}
                     </TableCell>
                     <TableCell align="center">{row.username}</TableCell>
                     <TableCell align="center">{row.email}</TableCell>
                     <TableCell align="center">{row.blood}</TableCell>
                     <TableCell align="center">{row.role}</TableCell>
                     <TableCell align="center">{row.createdAt}</TableCell>
+                    <TableCell align="center">
+                      <Stack spacing={0.5} direction="row">
+                        <IconButton aria-label="edit" color="primary">
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton aria-label="edit" color="error">
+                          <DeleteIcon />
+                        </IconButton>
+                      </Stack>
+                    </TableCell>
                   </TableRow>
                 );
               })}
