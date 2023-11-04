@@ -56,7 +56,7 @@ const StatusMaintenance = Loader(
 const routes = (isLoggedIn?: boolean): RouteObject[] => [
   {
     path: '',
-    element: isLoggedIn ? <Navigate to={'/dashboard'} /> : <BaseLayout />,
+    element: isLoggedIn ? <Navigate to={'/dashboards'} /> : <BaseLayout />,
     children: [
       {
         path: '/',

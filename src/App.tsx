@@ -5,10 +5,12 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 import { CssBaseline } from '@mui/material';
+import { useSelector } from 'react-redux';
 import ThemeProvider from './theme/ThemeProvider';
 
 function App() {
-  const content = useRoutes(router());
+  const { isAuthenticated } = useSelector((state: any) => state.auth);
+  const content = useRoutes(router(isAuthenticated));
 
   return (
     <ThemeProvider>

@@ -8,6 +8,15 @@ import App from 'src/App';
 import { SidebarProvider } from 'src/contexts/SidebarContext';
 import * as serviceWorker from 'src/serviceWorker';
 import { store } from './redux/app/store';
+import { logIn } from './redux/features/auth/authSlice';
+import { decodeToken, getToken } from './redux/utils/token';
+
+const token = getToken();
+if (token) {
+  const user = decodeToken(token);
+  console.log(user);
+  store.dispatch(logIn(user));
+}
 
 ReactDOM.render(
   <HelmetProvider>
