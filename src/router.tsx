@@ -53,10 +53,10 @@ const StatusMaintenance = Loader(
   lazy(() => import('src/content/pages/Status/Maintenance'))
 );
 
-const routes: RouteObject[] = [
+const routes = (isLoggedIn?: boolean): RouteObject[] => [
   {
     path: '',
-    element: <BaseLayout />,
+    element: isLoggedIn ? <Navigate to={'/dashboard'} /> : <BaseLayout />,
     children: [
       {
         path: '/',
@@ -107,7 +107,7 @@ const routes: RouteObject[] = [
   },
   {
     path: 'dashboards',
-    element: <SidebarLayout />,
+    element: !isLoggedIn ? <Navigate to={'/sign-in'} /> : <SidebarLayout />,
     children: [
       {
         path: '',
