@@ -23,6 +23,7 @@ const SignUp = Loader(lazy(() => import('src/content/signUp/SignUp')));
 
 // dashboard
 const AllUsers = Loader(lazy(() => import('src/content/dashboards/Users')));
+const AddUser = Loader(lazy(() => import('src/content/dashboards/AddUser')));
 
 // Applications
 const Messenger = Loader(
@@ -120,6 +121,10 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
       {
         path: 'users',
         element: <AllUsers />
+      },
+      {
+        path: 'users/add',
+        element: <AddUser />
       },
       {
         path: 'messenger',
