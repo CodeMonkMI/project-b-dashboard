@@ -1,9 +1,10 @@
-import { FC, ReactNode } from 'react';
 import { Box, alpha, lighten, useTheme } from '@mui/material';
-import { Outlet } from 'react-router-dom';
+import { FC, ReactNode } from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
 
-import Sidebar from './Sidebar';
+import { useSelector } from 'react-redux';
 import Header from './Header';
+import Sidebar from './Sidebar';
 
 interface SidebarLayoutProps {
   children?: ReactNode;
@@ -11,7 +12,11 @@ interface SidebarLayoutProps {
 
 const SidebarLayout: FC<SidebarLayoutProps> = () => {
   const theme = useTheme();
+  const { isAuthenticated } = useSelector((state: any) => state.auth);
 
+  if (!isAuthenticated) {
+    return <Navigate to={'/sign-in'} />;
+  }
   return (
     <>
       <Box

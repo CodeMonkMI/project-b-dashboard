@@ -4,13 +4,10 @@ import Footer from 'src/components/Footer';
 import { Container, Grid } from '@mui/material';
 
 import Addresses from './Addresses';
-import Feed from './Feed';
-import MyCards from './MyCards';
-import PopularTags from './PopularTags';
+import Contribution from './Contribution';
 import ProfileCover from './ProfileCover';
-import RecentActivity from './RecentActivity';
 
-function ManagementUserProfile() {
+function ViewProfile() {
   const user = {
     savedCards: 7,
     name: 'Catherine Pike',
@@ -32,7 +29,7 @@ function ManagementUserProfile() {
         <Grid
           container
           direction="row"
-          justifyContent="center"
+          justifyContent="start"
           alignItems="stretch"
           spacing={3}
         >
@@ -40,18 +37,9 @@ function ManagementUserProfile() {
             <ProfileCover user={user} />
           </Grid>
           <Grid item xs={12} md={4}>
-            <RecentActivity />
-          </Grid>
-          <Grid item xs={12} md={8}>
-            <Feed />
+            <Contribution />
           </Grid>
           <Grid item xs={12} md={4}>
-            <PopularTags />
-          </Grid>
-          <Grid item xs={12} md={7}>
-            <MyCards />
-          </Grid>
-          <Grid item xs={12} md={5}>
             <Addresses />
           </Grid>
         </Grid>
@@ -61,4 +49,4 @@ function ManagementUserProfile() {
   );
 }
 
-export default ManagementUserProfile;
+export default ViewProfile;

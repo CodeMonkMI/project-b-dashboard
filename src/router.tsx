@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { RouteObject } from 'react-router';
 import { Navigate } from 'react-router-dom';
 
+import AuthLayout from 'src/layouts/AuthLayout';
 import BaseLayout from 'src/layouts/BaseLayout';
 import SidebarLayout from 'src/layouts/SidebarLayout';
 
@@ -32,8 +33,8 @@ const Messenger = Loader(
 const Transactions = Loader(
   lazy(() => import('src/content/applications/Transactions'))
 );
-const UserProfile = Loader(
-  lazy(() => import('src/content/applications/Users/profile'))
+const ViewProfile = Loader(
+  lazy(() => import('src/content/applications/Users/profile-view'))
 );
 const UserSettings = Loader(
   lazy(() => import('src/content/applications/Users/settings'))
@@ -57,23 +58,23 @@ const StatusMaintenance = Loader(
 const routes = (isLoggedIn?: boolean): RouteObject[] => [
   {
     path: '',
-    element: isLoggedIn ? <Navigate to={'/dashboards'} /> : <BaseLayout />,
+    element: <BaseLayout />,
     children: [
       {
-        path: '/',
-        element: <Navigate to="/dashboards/crypto" replace />
-      },
-      {
         path: '/sign-in',
-        element: <SignIn />
+        element: (
+          <AuthLayout>
+            <SignIn />
+          </AuthLayout>
+        )
       },
       {
         path: '/sign-up',
-        element: <SignUp />
-      },
-      {
-        path: 'overview',
-        element: <Navigate to="/" replace />
+        element: (
+          <AuthLayout>
+            <SignUp />
+          </AuthLayout>
+        )
       },
       {
         path: 'status',
@@ -108,23 +109,33 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
   },
   {
     path: 'dashboards',
-    element: !isLoggedIn ? <Navigate to={'/sign-in'} /> : <SidebarLayout />,
+    element: <SidebarLayout />,
     children: [
       {
         path: '',
-        element: <Navigate to="crypto" replace />
-      },
-      {
-        path: 'crypto',
         element: <Crypto />
       },
       {
         path: 'users',
-        element: <AllUsers />
-      },
-      {
-        path: 'users/add',
-        element: <AddUser />
+        children: [
+          {
+            path: 'all',
+            element: <AllUsers />
+          },
+          {
+            path: 'add',
+            element: <AddUser />
+          },
+          {
+            path: 'view',
+            children: [
+              {
+                path: ':id',
+                element: <ViewProfile />
+              }
+            ]
+          }
+        ]
       },
       {
         path: 'messenger',
@@ -150,10 +161,6 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
           {
             path: '',
             element: <Navigate to="details" replace />
-          },
-          {
-            path: 'details',
-            element: <UserProfile />
           },
           {
             path: 'settings',

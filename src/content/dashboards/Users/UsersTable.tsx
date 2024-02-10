@@ -1,3 +1,4 @@
+import BlockIcon from '@mui/icons-material/Block';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Box from '@mui/material/Box';
@@ -5,8 +6,10 @@ import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useGetUsersQuery } from 'src/redux/features/user/userApiSlice';
 import { userTableDateFormatter } from 'src/utils/dateFormatrer';
 
@@ -143,11 +146,16 @@ const columns: GridColDef[] = [
     renderCell: (params) => {
       return (
         <Stack spacing={0.5} direction="row">
+          <Link to={`/dashboards/users/view/${params.id}`}>
+            <IconButton aria-label="edit" color="primary">
+              <RemoveRedEyeIcon />
+            </IconButton>
+          </Link>
           <IconButton aria-label="edit" color="primary">
             <EditIcon />
           </IconButton>
           <IconButton aria-label="edit" color="primary">
-            <EditIcon />
+            <BlockIcon />
           </IconButton>
           <IconButton aria-label="edit" color="error">
             <DeleteIcon />
