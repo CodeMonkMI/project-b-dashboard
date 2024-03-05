@@ -1,5 +1,6 @@
-import { Container, Grid } from '@mui/material';
+import { Box, Container, Grid } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
+import AddUserForm from './Form';
 
 const AddUser = () => {
   return (
@@ -15,8 +16,11 @@ const AddUser = () => {
           alignItems="stretch"
           spacing={4}
         >
-          <Grid item xs={12}>
-            <h2>Add user</h2>
+          <Grid item xs={6}>
+            <Box sx={{ bgcolor: 'white', boxShadow: 3, p: 3 }}>
+              <h2>Add user</h2>
+              <AddUserForm />
+            </Box>
           </Grid>
         </Grid>
       </Container>
