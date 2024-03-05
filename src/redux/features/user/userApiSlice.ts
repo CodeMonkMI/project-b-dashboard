@@ -35,6 +35,34 @@ export const userApi = apiSlice.injectEndpoints({
         }
       }
     }),
+    removeUser: builder.mutation({
+      query: (username) => ({
+        url: `/user/remove/${username}/confirm`,
+        method: 'DELETE'
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const updateUser = dispatch(
+          userApi.util.updateQueryData(
+            'getUsers',
+            undefined,
+            (draftUser: any) => {
+              const newUsers = draftUser.data.filter(
+                (user) => user.username !== arg
+              );
+              return {
+                ...draftUser,
+                data: newUsers
+              };
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          updateUser.undo();
+        }
+      }
+    }),
     geRoles: builder.query<any, void>({
       query: () => ({
         url: '/user/roles',
@@ -44,5 +72,9 @@ export const userApi = apiSlice.injectEndpoints({
   })
 });
 
-export const { useGetUsersQuery, useGeRolesQuery, useAddUserMutation } =
-  userApi;
+export const {
+  useGetUsersQuery,
+  useGeRolesQuery,
+  useAddUserMutation,
+  useRemoveUserMutation
+} = userApi;

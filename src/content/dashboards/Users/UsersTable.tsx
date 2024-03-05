@@ -10,10 +10,13 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useGetUsersQuery } from 'src/redux/features/user/userApiSlice';
+import {
+  useGetUsersQuery,
+  useRemoveUserMutation
+} from 'src/redux/features/user/userApiSlice';
 import { userTableDateFormatter } from 'src/utils/dateFormatrer';
 
-interface Data {
+interface VisibleDataTypes {
   id: number | string | any;
   username: string;
   email: string;
@@ -21,17 +24,6 @@ interface Data {
   blood: string;
   createdAt: string;
 }
-
-const rows = [
-  {
-    id: 1,
-    username: 'mdmonir027',
-    email: 'mmislam027@gmail.com',
-    role: 'Admin',
-    blood: 'A+',
-    createdAt: '19 min ago'
-  }
-];
 
 interface USER_DATA_SERVER {
   id: String;
@@ -62,7 +54,7 @@ interface USER_DATA_SERVER {
 export default function EnhancedTable() {
   const { data: userData, isLoading, isSuccess, isError } = useGetUsersQuery();
 
-  const visibleRows: Data[] = useMemo<Data[]>(() => {
+  const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
     if (isLoading || isError) return [];
     return userData.data.map((a: USER_DATA_SERVER, i: number) => {
       return {
@@ -77,12 +69,21 @@ export default function EnhancedTable() {
     });
   }, [userData]);
 
+  const [
+    removeUser,
+    {
+      isError: isRemoveError,
+      isLoading: isRemoveLoading,
+      isSuccess: isRemoveSuccess
+    }
+  ] = useRemoveUserMutation();
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <DataGrid
           rows={visibleRows}
-          columns={columns}
+          columns={columns(removeUser)}
           disableColumnMenu
           rowSelection={false}
           pageSizeOptions={[5, 10, 25, 50, 100]}
@@ -97,7 +98,7 @@ export default function EnhancedTable() {
   );
 }
 
-const columns: GridColDef[] = [
+const columns = (removeUser: any): GridColDef[] => [
   {
     field: 'sr',
     headerName: 'No.',
@@ -146,7 +147,7 @@ const columns: GridColDef[] = [
     renderCell: (params) => {
       return (
         <Stack spacing={0.5} direction="row">
-          <Link to={`/dashboards/users/view/${params.id}`}>
+          <Link to={`/dashboards/users/view/${params.row.username}`}>
             <IconButton aria-label="edit" color="primary">
               <RemoveRedEyeIcon />
             </IconButton>
@@ -157,7 +158,11 @@ const columns: GridColDef[] = [
           <IconButton aria-label="edit" color="primary">
             <BlockIcon />
           </IconButton>
-          <IconButton aria-label="edit" color="error">
+          <IconButton
+            aria-label="edit"
+            color="error"
+            onClick={() => removeUser(params.row.username)}
+          >
             <DeleteIcon />
           </IconButton>
         </Stack>
