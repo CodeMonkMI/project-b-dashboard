@@ -69,14 +69,7 @@ export default function EnhancedTable() {
     });
   }, [userData]);
 
-  const [
-    removeUser,
-    {
-      isError: isRemoveError,
-      isLoading: isRemoveLoading,
-      isSuccess: isRemoveSuccess
-    }
-  ] = useRemoveUserMutation();
+  const [removeUser] = useRemoveUserMutation();
 
   return (
     <Box sx={{ width: '100%' }}>
