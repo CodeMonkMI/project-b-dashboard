@@ -40,8 +40,16 @@ const CardCover = styled(Card)(
 `
 );
 
-const ProfileCover = ({ user }) => {
+const ProfileCover: React.FC<{
+  name: string;
+  coverImg: string;
+  avatar: string;
+  description: string;
+  blood: string;
+}> = (props) => {
   const navigate = useNavigate();
+
+  const { name, coverImg, avatar, description, blood } = props;
   return (
     <>
       <Box display="flex" mb={3} alignItems={'center'}>
@@ -58,22 +66,26 @@ const ProfileCover = ({ user }) => {
         </Tooltip>
         <Box>
           <Typography variant="h3" component="h3" gutterBottom>
-            {user.name}
+            {name}
           </Typography>
         </Box>
       </Box>
       <CardCover>
-        <CardMedia image={user.coverImg} />
+        <CardMedia image={coverImg} />
       </CardCover>
       <AvatarWrapper>
-        <Avatar variant="rounded" alt={user.name} src={user.avatar} />
+        <Avatar
+          variant="rounded"
+          alt={name}
+          src={avatar || `https://ui-avatars.com/api/?name=${name}&size=200`}
+        />
       </AvatarWrapper>
       <Box py={2} pl={2} mb={3}>
         <Typography gutterBottom variant="h4">
-          {user.name}
+          {name}
         </Typography>
         <Typography sx={{ pb: 2 }} variant="subtitle2">
-          {user.description}
+          {description}
         </Typography>
 
         <Box
@@ -81,12 +93,19 @@ const ProfileCover = ({ user }) => {
           alignItems="center"
           justifyContent="space-between"
         >
-          <Box>
-            <Button size="small" variant="contained">
-              Follow
+          <Box sx={{ display: 'initial' }}>
+            <Button size="small" variant="contained" color="error">
+              {blood
+                .replaceAll('_POSITIVE', '+')
+                .replaceAll('_NEGATIVE', '-') || 'Unknown'}
             </Button>
-            <Button size="small" sx={{ mx: 1 }} variant="outlined">
-              View website
+            <Button
+              size="small"
+              sx={{ mx: 1 }}
+              variant="outlined"
+              title="Is this user donated today? Click here to update last donation status"
+            >
+              Donated Today?
             </Button>
           </Box>
         </Box>

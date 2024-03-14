@@ -11,6 +11,16 @@ export const userApi = apiSlice.injectEndpoints({
         }
       })
     }),
+    getUser: builder.query<SingleUser, string>({
+      query: (id: string) => ({
+        url: `/user/single/${id}`,
+        method: 'get',
+        transformResponse: (rawResult: any) => {
+          console.log({ rawResult });
+          return rawResult.data.data;
+        }
+      })
+    }),
     addUser: builder.mutation({
       query: (data) => ({
         url: '/user/create',
@@ -76,5 +86,35 @@ export const {
   useGetUsersQuery,
   useGeRolesQuery,
   useAddUserMutation,
-  useRemoveUserMutation
+  useRemoveUserMutation,
+  useGetUserQuery
 } = userApi;
+
+interface SingleUser {
+  data?: {
+    id: string;
+    username: string;
+    email: string;
+    createdAt: string;
+
+    Profile: {
+      firstName: string;
+      lastName: string;
+      displayName: string;
+      fatherName: string;
+      motherName: string;
+      address: string;
+      streetAddress: string;
+      upzila: string;
+      zila: string;
+      phoneNo: string;
+      lastDonation: string;
+      bloodGroup: string;
+      image: string;
+    };
+    role: {
+      name: string;
+      role: string;
+    };
+  };
+}

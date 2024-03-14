@@ -23,6 +23,9 @@ interface VisibleDataTypes {
   role: string;
   blood: string;
   createdAt: string;
+  fullName: string;
+  phoneNo: string;
+  lastDonation: string;
 }
 
 interface USER_DATA_SERVER {
@@ -64,7 +67,10 @@ export default function EnhancedTable() {
         email: a.email,
         role: a.role.name,
         blood: a.Profile.bloodGroup,
-        createdAt: a.createdAt
+        createdAt: a.createdAt,
+        phoneNo: a.Profile.phoneNo,
+        fullName: `${a.Profile.firstName} ${a.Profile.lastName}`,
+        lastDonation: a?.Profile?.lastDonation || 'Unknown'
       };
     });
   }, [userData]);
@@ -98,8 +104,18 @@ const columns = (removeUser: any): GridColDef[] => [
     width: 100
   },
   {
-    field: 'username',
-    headerName: 'username',
+    field: 'fullName',
+    headerName: 'Full Name',
+    width: 150
+  },
+  {
+    field: 'phoneNo',
+    headerName: 'Phone No',
+    width: 150
+  },
+  {
+    field: 'lastDonation',
+    headerName: 'Last Donation',
     width: 150
   },
   {
