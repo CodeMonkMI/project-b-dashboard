@@ -245,23 +245,13 @@ function SidebarMenu() {
                   disableRipple
                   component={RouterLink}
                   onClick={closeSidebar}
-                  to="/management/transactions"
+                  to="/dashboards/request/pending"
                   startIcon={<TableChartTwoToneIcon />}
                 >
                   Pending
                 </Button>
               </ListItem>
-              <ListItem component="div">
-                <Button
-                  disableRipple
-                  component={RouterLink}
-                  onClick={closeSidebar}
-                  to="/management/transactions"
-                  startIcon={<TableChartTwoToneIcon />}
-                >
-                  Approved
-                </Button>
-              </ListItem>
+
               <ListItem component="div">
                 <Button
                   disableRipple
@@ -271,6 +261,17 @@ function SidebarMenu() {
                   startIcon={<TableChartTwoToneIcon />}
                 >
                   Manage
+                </Button>
+              </ListItem>
+              <ListItem component="div">
+                <Button
+                  disableRipple
+                  component={RouterLink}
+                  onClick={closeSidebar}
+                  to="/dashboards/request/completed"
+                  startIcon={<TableChartTwoToneIcon />}
+                >
+                  Completed
                 </Button>
               </ListItem>
             </List>

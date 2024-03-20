@@ -30,6 +30,12 @@ const AddUser = Loader(lazy(() => import('src/content/dashboards/AddUser')));
 const RequestManage = Loader(
   lazy(() => import('src/content/dashboards/Request/RequestManage'))
 );
+const RequestCompleted = Loader(
+  lazy(() => import('src/content/dashboards/Request/Completed'))
+);
+const RequestPending = Loader(
+  lazy(() => import('src/content/dashboards/Request/Pending'))
+);
 
 // Applications
 const Messenger = Loader(
@@ -147,6 +153,14 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
           {
             path: 'all',
             element: <RequestManage />
+          },
+          {
+            path: 'completed',
+            element: <RequestCompleted />
+          },
+          {
+            path: 'Pending',
+            element: <RequestPending />
           },
           {
             path: 'add',
