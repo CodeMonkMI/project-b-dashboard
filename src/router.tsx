@@ -26,6 +26,11 @@ const SignUp = Loader(lazy(() => import('src/content/signUp/SignUp')));
 const AllUsers = Loader(lazy(() => import('src/content/dashboards/Users')));
 const AddUser = Loader(lazy(() => import('src/content/dashboards/AddUser')));
 
+// Donation Request
+const RequestManage = Loader(
+  lazy(() => import('src/content/dashboards/Request/RequestManage'))
+);
+
 // Applications
 const Messenger = Loader(
   lazy(() => import('src/content/applications/Messenger'))
@@ -41,7 +46,6 @@ const UserSettings = Loader(
 );
 
 // Status
-
 const Status404 = Loader(
   lazy(() => import('src/content/pages/Status/Status404'))
 );
@@ -121,6 +125,28 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
           {
             path: 'all',
             element: <AllUsers />
+          },
+          {
+            path: 'add',
+            element: <AddUser />
+          },
+          {
+            path: 'view',
+            children: [
+              {
+                path: ':id',
+                element: <ViewProfile />
+              }
+            ]
+          }
+        ]
+      },
+      {
+        path: 'request',
+        children: [
+          {
+            path: 'all',
+            element: <RequestManage />
           },
           {
             path: 'add',
