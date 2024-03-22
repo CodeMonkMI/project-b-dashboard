@@ -3,6 +3,7 @@ import router from 'src/router';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import './app.css';
 
 import { CssBaseline } from '@mui/material';
 import { useSelector } from 'react-redux';

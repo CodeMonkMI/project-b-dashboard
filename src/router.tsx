@@ -37,6 +37,9 @@ const RequestPending = Loader(
   lazy(() => import('src/content/dashboards/Request/Pending'))
 );
 const History = Loader(lazy(() => import('src/content/dashboards/History')));
+const MakeRequest = Loader(
+  lazy(() => import('src/content/dashboards/Request/Make'))
+);
 
 // Applications
 const Messenger = Loader(
@@ -151,6 +154,10 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
       {
         path: 'history',
         element: <History />
+      },
+      {
+        path: 'make-request',
+        element: <MakeRequest />
       },
       {
         path: 'request',

@@ -181,6 +181,17 @@ function SidebarMenu() {
                   Dashboard
                 </Button>
               </ListItem>
+              <ListItem component="div">
+                <Button
+                  disableRipple
+                  component={RouterLink}
+                  onClick={closeSidebar}
+                  to="/dashboards/make-request"
+                  startIcon={<DesignServicesTwoToneIcon />}
+                >
+                  Make Request
+                </Button>
+              </ListItem>
             </List>
           </SubMenuWrapper>
         </List>
