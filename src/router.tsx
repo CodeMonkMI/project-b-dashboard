@@ -40,6 +40,9 @@ const History = Loader(lazy(() => import('src/content/dashboards/History')));
 const MakeRequest = Loader(
   lazy(() => import('src/content/dashboards/Request/Make'))
 );
+const DonorFinder = Loader(
+  lazy(() => import('src/content/dashboards/Donor/Finder'))
+);
 
 // Applications
 const Messenger = Loader(
@@ -158,6 +161,10 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
       {
         path: 'make-request',
         element: <MakeRequest />
+      },
+      {
+        path: 'donor-finder',
+        element: <DonorFinder />
       },
       {
         path: 'request',
