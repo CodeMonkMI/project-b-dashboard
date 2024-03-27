@@ -73,6 +73,31 @@ export const userApi = apiSlice.injectEndpoints({
         }
       }
     }),
+    verifyUser: builder.mutation({
+      query: (username) => ({
+        url: `/user/verify/${username}`,
+        method: 'PATCH'
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const updateUser = dispatch(
+          userApi.util.updateQueryData(
+            'getUsers',
+            undefined,
+            (draftUser: any) => {
+              const findUser = draftUser.data.find(
+                (item) => item.username === arg
+              );
+              findUser.isVerified = true;
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          updateUser.undo();
+        }
+      }
+    }),
     geRoles: builder.query<any, void>({
       query: () => ({
         url: '/user/roles',
@@ -87,7 +112,8 @@ export const {
   useGeRolesQuery,
   useAddUserMutation,
   useRemoveUserMutation,
-  useGetUserQuery
+  useGetUserQuery,
+  useVerifyUserMutation
 } = userApi;
 
 interface SingleUser {

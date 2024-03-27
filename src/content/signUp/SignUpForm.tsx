@@ -33,7 +33,6 @@ interface FormValues {
   firstName: string;
   lastName: string;
   email: string;
-  username: string;
   password: string;
   confirmPassword: string;
   blood: blood_type;
@@ -205,33 +204,6 @@ const SignUpForm = () => {
                     autoFocus
                     error={!!errors?.email}
                     helperText={errors?.email?.message}
-                  />
-                </>
-              )}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <Controller
-              control={control}
-              name="username"
-              rules={{
-                required: 'Username is required'
-              }}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <>
-                  <TextField
-                    autoComplete="firstName"
-                    name="username"
-                    fullWidth
-                    id="username"
-                    label="Username"
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                    autoFocus
-                    error={!!errors?.username}
-                    helperText={errors?.username?.message}
                   />
                 </>
               )}

@@ -1,6 +1,5 @@
 import BlockIcon from '@mui/icons-material/Block';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
@@ -16,41 +15,30 @@ import {
 } from 'src/redux/features/user/userApiSlice';
 import { userTableDateFormatter } from 'src/utils/dateFormatrer';
 
-interface VisibleDataTypes {
-  id: number | string | any;
+interface USER_DATA_SERVER {
+  id: string;
   username: string;
   email: string;
-  role: string;
-  blood: string;
   createdAt: string;
-  fullName: string;
-  phoneNo: string;
-  lastDonation: string;
-}
-
-interface USER_DATA_SERVER {
-  id: String;
-  username: String;
-  email: String;
-  createdAt: String;
+  isVerified: boolean;
   Profile: {
-    firstName: String;
-    lastName: String;
-    displayName: String;
-    fatherName: String;
-    motherName: String;
-    address: String;
-    streetAddress: String;
-    upzila: String;
-    zila: String;
-    phoneNo: String;
-    lastDonation: String;
-    bloodGroup: String;
-    image: String;
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    fatherName: string;
+    motherName: string;
+    address: string;
+    streetAddress: string;
+    upzila: string;
+    zila: string;
+    phoneNo: string;
+    lastDonation: string;
+    bloodGroup: string;
+    image: string;
   };
   role: {
-    name: String;
-    role: String;
+    name: string;
+    role: string;
   };
 }
 
@@ -59,20 +47,28 @@ export default function EnhancedTable() {
 
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
     if (isLoading || isError) return [];
-    return userData.data.map((a: USER_DATA_SERVER, i: number) => {
-      return {
-        sr: i + 1,
-        id: a.id,
-        username: a.username,
-        email: a.email,
-        role: a.role.name,
-        blood: a.Profile.bloodGroup,
-        createdAt: a.createdAt,
-        phoneNo: a.Profile.phoneNo,
-        fullName: `${a.Profile.firstName} ${a.Profile.lastName}`,
-        lastDonation: a?.Profile?.lastDonation || 'Unknown'
-      };
-    });
+    return (
+      userData?.data?.reduce(
+        (acc: VisibleDataTypes[], a: USER_DATA_SERVER, i: number) => {
+          if (a.isVerified) {
+            acc.push({
+              sr: acc.length + 1,
+              id: a.id,
+              username: a.username,
+              email: a.email,
+              role: a.role.name,
+              blood: a.Profile.bloodGroup,
+              createdAt: a.createdAt,
+              phoneNo: a.Profile.phoneNo,
+              fullName: `${a.Profile.firstName} ${a.Profile.lastName}`,
+              lastDonation: a?.Profile?.lastDonation || '-'
+            });
+          }
+          return acc;
+        },
+        []
+      ) || []
+    );
   }, [userData]);
 
   const [removeUser] = useRemoveUserMutation();
@@ -95,6 +91,19 @@ export default function EnhancedTable() {
       </Paper>
     </Box>
   );
+}
+
+interface VisibleDataTypes {
+  id: number | string | any;
+  sr: number | string | any;
+  phoneNo: string;
+  lastDonation: string;
+  email: string;
+  blood: string;
+  role: string;
+  createdAt: string;
+  fullName: string;
+  username: string;
 }
 
 const columns = (removeUser: any): GridColDef[] => [
@@ -161,15 +170,20 @@ const columns = (removeUser: any): GridColDef[] => [
               <RemoveRedEyeIcon />
             </IconButton>
           </Link>
-          <IconButton aria-label="edit" color="primary">
-            <EditIcon />
-          </IconButton>
-          <IconButton aria-label="edit" color="primary">
+
+          <IconButton
+            disabled={params.row.role === 'Super Admin'}
+            aria-label="Suspend"
+            color="primary"
+            title="Suspend"
+          >
             <BlockIcon />
           </IconButton>
           <IconButton
             aria-label="edit"
             color="error"
+            title="Delete"
+            disabled={params.row.role === 'Super Admin'}
             onClick={() => removeUser(params.row.username)}
           >
             <DeleteIcon />

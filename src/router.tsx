@@ -1,9 +1,8 @@
 import { Suspense, lazy } from 'react';
 import { RouteObject } from 'react-router';
-// import { Navigate } from 'react-router-dom';
-
-// import AuthLayout from 'src/layouts/AuthLayout';
-// import BaseLayout from 'src/layouts/BaseLayout';
+import { Navigate } from 'react-router-dom';
+import AuthLayout from 'src/layouts/AuthLayout';
+import BaseLayout from 'src/layouts/BaseLayout';
 import SidebarLayout from 'src/layouts/SidebarLayout';
 
 import SuspenseLoader from 'src/components/SuspenseLoader';
@@ -76,57 +75,57 @@ const StatusMaintenance = Loader(
 );
 
 const routes = (isLoggedIn?: boolean): RouteObject[] => [
-  // {
-  //   path: '',
-  //   element: <BaseLayout />,
-  //   children: [
-  //     {
-  //       path: '/sign-in',
-  //       element: (
-  //         <AuthLayout>
-  //           <SignIn />
-  //         </AuthLayout>
-  //       )
-  //     },
-  //     {
-  //       path: '/sign-up',
-  //       element: (
-  //         <AuthLayout>
-  //           <SignUp />
-  //         </AuthLayout>
-  //       )
-  //     },
-  //     {
-  //       path: 'status',
-  //       children: [
-  //         {
-  //           path: '',
-  //           element: <Navigate to="404" replace />
-  //         },
-  //         {
-  //           path: '404',
-  //           element: <Status404 />
-  //         },
-  //         {
-  //           path: '500',
-  //           element: <Status500 />
-  //         },
-  //         {
-  //           path: 'maintenance',
-  //           element: <StatusMaintenance />
-  //         },
-  //         {
-  //           path: 'coming-soon',
-  //           element: <StatusComingSoon />
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       path: '*',
-  //       element: <Status404 />
-  //     }
-  //   ]
-  // },
+  {
+    path: '',
+    element: <BaseLayout />,
+    children: [
+      {
+        path: '/sign-in',
+        element: (
+          <AuthLayout>
+            <SignIn />
+          </AuthLayout>
+        )
+      },
+      {
+        path: '/sign-up',
+        element: (
+          <AuthLayout>
+            <SignUp />
+          </AuthLayout>
+        )
+      },
+      {
+        path: 'status',
+        children: [
+          {
+            path: '',
+            element: <Navigate to="404" replace />
+          },
+          {
+            path: '404',
+            element: <Status404 />
+          },
+          {
+            path: '500',
+            element: <Status500 />
+          },
+          {
+            path: 'maintenance',
+            element: <StatusMaintenance />
+          },
+          {
+            path: 'coming-soon',
+            element: <StatusComingSoon />
+          }
+        ]
+      },
+      {
+        path: '*',
+        element: <Status404 />
+      }
+    ]
+  },
   {
     path: 'dashboards',
     element: <SidebarLayout />,
