@@ -24,6 +24,9 @@ const SignUp = Loader(lazy(() => import('src/content/signUp/SignUp')));
 
 // dashboard
 const AllUsers = Loader(lazy(() => import('src/content/dashboards/Users')));
+const PendingUser = Loader(
+  lazy(() => import('src/content/dashboards/Users/Pending'))
+);
 const AddUser = Loader(lazy(() => import('src/content/dashboards/AddUser')));
 
 // Donation Request
@@ -138,6 +141,10 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
           {
             path: 'all',
             element: <AllUsers />
+          },
+          {
+            path: 'pending',
+            element: <PendingUser />
           },
           {
             path: 'add',
