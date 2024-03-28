@@ -13,7 +13,7 @@ interface SidebarLayoutProps {
 
 const SidebarLayout: FC<SidebarLayoutProps> = () => {
   const theme = useTheme();
-  const { isAuthenticated } = useSelector((state: any) => state.auth);
+  const { isAuthenticated, me } = useSelector((state: any) => state.auth);
 
   useGetMeQuery(undefined, {
     skip: !isAuthenticated
