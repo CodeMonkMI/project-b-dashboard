@@ -1,3 +1,5 @@
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import BlockIcon from '@mui/icons-material/Block';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Box from '@mui/material/Box';
@@ -8,6 +10,7 @@ import Stack from '@mui/material/Stack';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   useGetUsersQuery,
@@ -44,7 +47,7 @@ interface USER_DATA_SERVER {
 
 export default function EnhancedTable() {
   const { data: userData, isLoading, isSuccess, isError } = useGetUsersQuery();
-
+  const { me } = useSelector((state: any) => state.auth);
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
     if (isLoading || isError) return [];
     return (
@@ -78,10 +81,13 @@ export default function EnhancedTable() {
       <Paper sx={{ width: '100%', mb: 2 }}>
         <DataGrid
           rows={visibleRows}
-          columns={columns(removeUser)}
+          columns={columns(removeUser, me)}
           disableColumnMenu
           rowSelection={false}
           pageSizeOptions={[5, 10, 25, 50, 100]}
+          columnVisibilityModel={{
+            role: me?.role?.role === 'super_admin'
+          }}
           initialState={{
             pagination: {
               paginationModel: { pageSize: 10, page: 0 }
@@ -106,7 +112,10 @@ interface VisibleDataTypes {
   username: string;
 }
 
-const columns = (removeUser: any): GridColDef[] => [
+const columns = (
+  removeUser: any,
+  me: { role: { role: string } }
+): GridColDef[] => [
   {
     field: 'sr',
     headerName: 'No.',
@@ -161,7 +170,7 @@ const columns = (removeUser: any): GridColDef[] => [
     field: 'id',
     headerName: 'Action',
     sortable: false,
-    width: 350,
+    width: me?.role?.role === 'super_admin' ? 350 : 100,
     renderCell: (params) => {
       return (
         <Stack spacing={0.5} direction="row">
@@ -170,24 +179,33 @@ const columns = (removeUser: any): GridColDef[] => [
               <RemoveRedEyeIcon />
             </IconButton>
           </Link>
-
-          <IconButton
-            disabled={params.row.role === 'Super Admin'}
-            aria-label="Suspend"
-            color="primary"
-            title="Suspend"
-          >
-            <BlockIcon />
-          </IconButton>
-          <IconButton
-            aria-label="edit"
-            color="error"
-            title="Delete"
-            disabled={params.row.role === 'Super Admin'}
-            onClick={() => removeUser(params.row.username)}
-          >
-            <DeleteIcon />
-          </IconButton>
+          {me?.role?.role === 'super_admin' && (
+            <>
+              <IconButton aria-label="edit" color="primary">
+                <ArrowUpwardIcon />
+              </IconButton>
+              <IconButton aria-label="edit" color="warning">
+                <ArrowDownwardIcon />
+              </IconButton>
+              <IconButton
+                disabled={params.row.role === 'Super Admin'}
+                aria-label="Suspend"
+                color="primary"
+                title="Suspend"
+              >
+                <BlockIcon />
+              </IconButton>
+              <IconButton
+                aria-label="edit"
+                color="error"
+                title="Delete"
+                disabled={params.row.role === 'Super Admin'}
+                onClick={() => removeUser(params.row.username)}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </>
+          )}
         </Stack>
       );
     }
