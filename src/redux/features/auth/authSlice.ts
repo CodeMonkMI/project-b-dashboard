@@ -2,7 +2,32 @@ import { createSlice } from '@reduxjs/toolkit';
 
 interface StateProps {
   user: Object;
-  me: Object;
+  me:
+    | {
+        id: string;
+        username: string;
+        email: string;
+        Profile: {
+          firstName: string;
+          lastName: string;
+          displayName: string;
+          fatherName: string;
+          motherName: string;
+          address: string;
+          streetAddress: string;
+          upzila: string;
+          zila: string;
+          phoneNo: string;
+          lastDonation: string;
+          bloodGroup: string;
+          image: string;
+        };
+        role: {
+          name: string;
+          role: string;
+        };
+      }
+    | {};
   isAuthenticated: Boolean;
 }
 

@@ -1,6 +1,6 @@
 import { getTokenData, storeToken } from 'src/redux/utils/token';
 import { apiSlice } from '../api/apiSlice';
-import { logIn } from './authSlice';
+import { logIn, setMe } from './authSlice';
 
 export const authApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -35,8 +35,16 @@ export const authApi = apiSlice.injectEndpoints({
     getMe: builder.query({
       query: () => ({
         url: '/auth/me',
-        method: 'get'
-      })
+        method: 'post'
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(setMe(result.data.data));
+        } catch (err) {
+          // do nothing
+        }
+      }
     }),
     updatePassword: builder.mutation({
       query: (data) => ({
