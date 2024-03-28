@@ -21,7 +21,7 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { useRegisterMutation } from 'src/redux/features/auth/authApiSlice';
 import { v4 } from 'uuid';
 
@@ -95,7 +95,7 @@ const BLOOD_GROUP_LIST: BloodListProps[] = [
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const navigate = useNavigate();
+
   const [userSignUp, { isError, isLoading, isSuccess, error }] =
     useRegisterMutation();
 
@@ -128,12 +128,6 @@ const SignUpForm = () => {
     }
   }, [isError, isLoading]);
 
-  useEffect(() => {
-    if (isLoading) {
-      console.log('loading....');
-    }
-  }, [isLoading]);
-
   return (
     <div>
       <Box
@@ -155,28 +149,6 @@ const SignUpForm = () => {
               error={!!errors?.firstName}
               helperText={errors?.firstName?.message}
             />
-            {/* <Controller
-              control={control}
-              name="firstName"
-              rules={{ required: 'First name is required' }}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <>
-                  <TextField
-                    autoComplete="firstName"
-                    name="firstName"
-                    fullWidth
-                    id="firstName"
-                    label="First Name"
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                    autoFocus
-                    error={!!errors?.firstName}
-                    helperText={errors?.firstName?.message}
-                  />
-                </>
-              )}
-            /> */}
           </Grid>
 
           <Grid item xs={12}>

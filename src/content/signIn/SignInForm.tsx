@@ -1,6 +1,6 @@
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { IconButton, InputAdornment } from '@mui/material';
+import { Alert, IconButton, InputAdornment } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -21,6 +21,7 @@ export interface SignInFormValues {
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+
   const navigate = useNavigate();
   const [login, { isError, isLoading, isSuccess, error }] = useLoginMutation();
 
@@ -37,11 +38,14 @@ const SignInForm = () => {
 
   useEffect(() => {
     if (isError && !isLoading) {
-      if (error && 'data' in error) {
-        const allErrors = error.data;
-        Object.entries(allErrors).map((item: any) => {
-          setError(item[0], { message: item[1] });
-        });
+      console.log(error);
+      if (error && 'status' in error && 'data' in error) {
+        if (error.status === 400) {
+          const allErrors = error.data;
+          Object.entries(allErrors).map((item: any) => {
+            setError(item[0], { message: item[1] });
+          });
+        }
       }
     }
   }, [isError, isLoading]);
@@ -59,6 +63,17 @@ const SignInForm = () => {
 
   return (
     <>
+      {!isLoading &&
+        isError &&
+        'status' in error &&
+        error.status === 406 &&
+        'data' in error && (
+          <>
+            <Alert variant="standard" severity="warning">
+              {error?.data['message']}
+            </Alert>
+          </>
+        )}
       <Box
         component="form"
         noValidate
