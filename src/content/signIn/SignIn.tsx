@@ -7,26 +7,9 @@ import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import { Helmet } from 'react-helmet-async';
 import { Link as RouterLink } from 'react-router-dom';
 import SignInForm from './SignInForm';
-
-function Copyright(props: any) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
@@ -34,6 +17,9 @@ const defaultTheme = createTheme();
 export default function SignInSide() {
   return (
     <ThemeProvider theme={defaultTheme}>
+      <Helmet>
+        <title>Sign In </title>
+      </Helmet>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
@@ -82,7 +68,6 @@ export default function SignInSide() {
                 </Link>
               </Grid>
             </Grid>
-            <Copyright sx={{ mt: 5 }} />
           </Box>
         </Grid>
       </Grid>

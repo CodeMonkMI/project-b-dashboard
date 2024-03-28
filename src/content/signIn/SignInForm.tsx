@@ -6,12 +6,13 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
+import LinearProgress from '@mui/material/LinearProgress';
+import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import { useLoginMutation } from 'src/redux/features/auth/authApiSlice';
-
 // form values type
 export interface SignInFormValues {
   username: string;
@@ -26,7 +27,8 @@ const SignInForm = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    setError
   } = useForm<SignInFormValues>();
 
   const submitHandler = (data: SignInFormValues) => {
@@ -35,7 +37,12 @@ const SignInForm = () => {
 
   useEffect(() => {
     if (isError && !isLoading) {
-      console.log(error);
+      if (error && 'data' in error) {
+        const allErrors = error.data;
+        Object.entries(allErrors).map((item: any) => {
+          setError(item[0], { message: item[1] });
+        });
+      }
     }
   }, [isError, isLoading]);
   useEffect(() => {
@@ -134,12 +141,15 @@ const SignInForm = () => {
             />
           </Grid>
         </Grid>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
+        {isLoading && (
+          <Stack
+            sx={{ width: '100%', color: 'grey.500', mt: 3, mb: 1 }}
+            spacing={0}
+          >
+            <LinearProgress color="info" />
+          </Stack>
+        )}
+        <Button type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
           Sign Up
         </Button>
       </Box>
