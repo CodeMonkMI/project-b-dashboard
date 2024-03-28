@@ -8,7 +8,6 @@ import './app.css';
 import { CssBaseline } from '@mui/material';
 import { useSelector } from 'react-redux';
 import ThemeProvider from './theme/ThemeProvider';
-
 function App() {
   const { isAuthenticated } = useSelector((state: any) => state.auth);
   const content = useRoutes(router(isAuthenticated));
@@ -17,6 +16,7 @@ function App() {
     <ThemeProvider>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <CssBaseline />
+
         {content}
       </LocalizationProvider>
     </ThemeProvider>

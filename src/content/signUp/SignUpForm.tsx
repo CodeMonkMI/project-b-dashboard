@@ -1,6 +1,13 @@
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { FormHelperText, IconButton, InputAdornment } from '@mui/material';
+import {
+  Alert,
+  FormHelperText,
+  IconButton,
+  InputAdornment,
+  LinearProgress,
+  Stack
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -89,27 +96,35 @@ const BLOOD_GROUP_LIST: BloodListProps[] = [
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const navigate = useNavigate();
-  const [register, { isError, isLoading, isSuccess, error }] =
+  const [userSignUp, { isError, isLoading, isSuccess, error }] =
     useRegisterMutation();
 
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    setError,
+    reset,
+    register
   } = useForm<FormValues>();
 
   const submitHandler = (data: FormValues) => {
-    register(data);
+    userSignUp(data);
   };
 
   useEffect(() => {
     if (isError && !isLoading) {
-      console.log(error);
+      if (error && 'data' in error) {
+        const allErrors = error.data;
+        Object.entries(allErrors).map((item: any) => {
+          setError(item[0], { message: item[1] });
+        });
+      }
     }
   }, [isError, isLoading]);
   useEffect(() => {
     if (isSuccess && !isLoading) {
-      navigate('/dashboards');
+      reset();
     }
   }, [isError, isLoading]);
 
@@ -121,7 +136,6 @@ const SignUpForm = () => {
 
   return (
     <div>
-      {' '}
       <Box
         component="form"
         noValidate
@@ -130,7 +144,18 @@ const SignUpForm = () => {
       >
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <Controller
+            <TextField
+              autoComplete="firstName"
+              name="firstName"
+              fullWidth
+              id="firstName"
+              label="First Name"
+              {...register('firstName', { required: 'First name is required' })}
+              autoFocus
+              error={!!errors?.firstName}
+              helperText={errors?.firstName?.message}
+            />
+            {/* <Controller
               control={control}
               name="firstName"
               rules={{ required: 'First name is required' }}
@@ -151,62 +176,40 @@ const SignUpForm = () => {
                   />
                 </>
               )}
-            />
+            /> */}
           </Grid>
 
           <Grid item xs={12}>
-            <Controller
-              control={control}
+            <TextField
+              autoComplete="firstName"
               name="lastName"
-              rules={{ required: 'Last name is required' }}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <>
-                  <TextField
-                    autoComplete="firstName"
-                    name="lastName"
-                    fullWidth
-                    id="lastName"
-                    label="Last Name"
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                    autoFocus
-                    error={!!errors?.lastName}
-                    helperText={errors?.lastName?.message}
-                  />
-                </>
-              )}
+              fullWidth
+              id="lastName"
+              label="Last Name"
+              autoFocus
+              {...register('lastName', { required: 'Last name is required' })}
+              error={!!errors?.lastName}
+              helperText={errors?.lastName?.message}
             />
           </Grid>
 
           <Grid item xs={12}>
-            <Controller
-              control={control}
+            <TextField
+              autoComplete="firstName"
               name="email"
-              rules={{
+              fullWidth
+              id="email"
+              label="Email Address"
+              {...register('email', {
                 required: 'Email is required',
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                   message: 'Email must be valid'
                 }
-              }}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <>
-                  <TextField
-                    autoComplete="firstName"
-                    name="email"
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                    autoFocus
-                    error={!!errors?.email}
-                    helperText={errors?.email?.message}
-                  />
-                </>
-              )}
+              })}
+              autoFocus
+              error={!!errors?.email}
+              helperText={errors?.email?.message}
             />
           </Grid>
 
@@ -231,6 +234,7 @@ const SignUpForm = () => {
                       label="Blood Group"
                       onChange={onChange}
                       onBlur={onBlur}
+                      ref={ref}
                     >
                       {BLOOD_GROUP_LIST.map((item: BloodListProps) => (
                         <MenuItem value={blood_type[item.value]} key={item.id}>
@@ -248,10 +252,12 @@ const SignUpForm = () => {
           </Grid>
 
           <Grid item xs={12}>
-            <Controller
-              control={control}
+            <TextField
+              fullWidth
               name="password"
-              rules={{
+              label="Password"
+              type={showPassword ? 'text' : 'password'}
+              {...register('password', {
                 required: 'Password is required',
                 minLength: {
                   value: 6,
@@ -261,67 +267,43 @@ const SignUpForm = () => {
                   value: 32,
                   message: 'Password must be lesser than 32 chars'
                 }
+              })}
+              error={!!errors?.password}
+              helperText={errors?.password?.message}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? (
+                        <VisibilityIcon />
+                      ) : (
+                        <VisibilityOffIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                )
               }}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <>
-                  <TextField
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type={showPassword ? 'text' : 'password'}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                    error={!!errors?.password}
-                    helperText={errors?.password?.message}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => setShowPassword(!showPassword)}
-                            edge="end"
-                          >
-                            {showPassword ? (
-                              <VisibilityIcon />
-                            ) : (
-                              <VisibilityOffIcon />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      )
-                    }}
-                  />
-                </>
-              )}
             />
           </Grid>
           <Grid item xs={12}>
-            <Controller
-              control={control}
+            <TextField
+              fullWidth
               name="confirmPassword"
-              rules={{
+              label="Confirm Password"
+              type={showPassword ? 'text' : 'password'}
+              {...register('confirmPassword', {
                 required: 'Confirm Your password!',
                 validate: (confirmPassword, { password }) => {
                   if (confirmPassword !== password)
                     return "Password didn't match";
                   return true;
                 }
-              }}
-              render={({ field: { onChange, onBlur, value, ref } }) => (
-                <>
-                  <TextField
-                    fullWidth
-                    name="password"
-                    label="Confirm Password"
-                    type={showPassword ? 'text' : 'password'}
-                    onChange={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                    error={!!errors?.confirmPassword}
-                    helperText={errors?.confirmPassword?.message}
-                  />
-                </>
-              )}
+              })}
+              error={!!errors?.confirmPassword}
+              helperText={errors?.confirmPassword?.message}
             />
           </Grid>
 
@@ -332,6 +314,23 @@ const SignUpForm = () => {
             />
           </Grid>
         </Grid>
+        {isLoading && (
+          <Stack
+            sx={{ width: '100%', color: 'grey.500', mt: 3, mb: 1 }}
+            spacing={0}
+          >
+            <LinearProgress color="info" />
+          </Stack>
+        )}
+        {!isLoading && isSuccess && (
+          <>
+            <Alert variant="standard" severity="success">
+              Your account creation process was successful! We will verify your
+              information and activate your account as soon as possible. You
+              will be notified via email when your account is activated!
+            </Alert>
+          </>
+        )}
         <Button
           type="submit"
           fullWidth

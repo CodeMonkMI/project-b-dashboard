@@ -9,18 +9,7 @@ export const authApi = apiSlice.injectEndpoints({
         url: '/auth/sign-up',
         method: 'POST',
         body: data
-      }),
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        try {
-          const result = await queryFulfilled;
-          const { token } = result.data.data;
-          storeToken(token);
-          const user = getTokenData();
-          dispatch(logIn(user));
-        } catch (err) {
-          // do nothing
-        }
-      }
+      })
     }),
     login: builder.mutation({
       query: (data) => ({

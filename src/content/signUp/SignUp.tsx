@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import { Helmet } from 'react-helmet-async';
 import SignUpForm from './SignUpForm';
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -14,6 +15,9 @@ const defaultTheme = createTheme();
 export default function SignUpSide() {
   return (
     <ThemeProvider theme={defaultTheme}>
+      <Helmet>
+        <title>Sign Up</title>
+      </Helmet>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
