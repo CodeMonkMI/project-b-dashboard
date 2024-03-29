@@ -13,7 +13,9 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
+  useDemoteUserMutation,
   useGetUsersQuery,
+  usePromoteUserMutation,
   useRemoveUserMutation
 } from 'src/redux/features/user/userApiSlice';
 import { userTableDateFormatter } from 'src/utils/dateFormatrer';
@@ -47,6 +49,8 @@ interface USER_DATA_SERVER {
 
 export default function EnhancedTable() {
   const { data: userData, isLoading, isSuccess, isError } = useGetUsersQuery();
+  const [promoteUser] = usePromoteUserMutation();
+  const [demoteUser] = useDemoteUserMutation();
   const { me } = useSelector((state: any) => state.auth);
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
     if (isLoading || isError) return [];
@@ -59,7 +63,7 @@ export default function EnhancedTable() {
               id: a.id,
               username: a.username,
               email: a.email,
-              role: a.role.name,
+              role: a.role.role,
               blood: a.Profile.bloodGroup,
               createdAt: a.createdAt,
               phoneNo: a.Profile.phoneNo,
@@ -81,7 +85,7 @@ export default function EnhancedTable() {
       <Paper sx={{ width: '100%', mb: 2 }}>
         <DataGrid
           rows={visibleRows}
-          columns={columns(removeUser, me)}
+          columns={columns({ removeUser, me, promoteUser, demoteUser })}
           disableColumnMenu
           rowSelection={false}
           pageSizeOptions={[5, 10, 25, 50, 100]}
@@ -112,10 +116,23 @@ interface VisibleDataTypes {
   username: string;
 }
 
-const columns = (
-  removeUser: any,
-  me: { role: { role: string } }
-): GridColDef[] => [
+interface ColumnsProps {
+  removeUser: any;
+  promoteUser: any;
+  demoteUser: any;
+  me: {
+    role: {
+      role: string;
+    };
+  };
+}
+
+const columns = ({
+  removeUser,
+  promoteUser,
+  me,
+  demoteUser
+}: ColumnsProps): GridColDef[] => [
   {
     field: 'sr',
     headerName: 'No.',
@@ -181,17 +198,28 @@ const columns = (
           </Link>
           {me?.role?.role === 'super_admin' && (
             <>
-              <IconButton aria-label="edit" color="primary">
+              <IconButton
+                aria-label="Promote"
+                color="primary"
+                onClick={() => promoteUser(params.row.username)}
+                disabled={params.row.role === 'super_admin'}
+              >
                 <ArrowUpwardIcon />
               </IconButton>
-              <IconButton aria-label="edit" color="warning">
+              <IconButton
+                aria-label="demote"
+                color="warning"
+                onClick={() => demoteUser(params.row.username)}
+                disabled={params.row.role === 'user'}
+              >
                 <ArrowDownwardIcon />
               </IconButton>
               <IconButton
-                disabled={params.row.role === 'Super Admin'}
+                disabled={params.row.role === 'super_admin'}
                 aria-label="Suspend"
                 color="primary"
                 title="Suspend"
+                sx={{ display: 'none' }}
               >
                 <BlockIcon />
               </IconButton>
@@ -199,7 +227,7 @@ const columns = (
                 aria-label="edit"
                 color="error"
                 title="Delete"
-                disabled={params.row.role === 'Super Admin'}
+                disabled={params.row.role === 'super_admin'}
                 onClick={() => removeUser(params.row.username)}
               >
                 <DeleteIcon />

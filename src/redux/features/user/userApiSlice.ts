@@ -98,6 +98,67 @@ export const userApi = apiSlice.injectEndpoints({
         }
       }
     }),
+    promoteUser: builder.mutation({
+      query: (username) => ({
+        url: `/user/promote`,
+        method: 'Post',
+        body: { username }
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const updateUser = dispatch(
+          userApi.util.updateQueryData(
+            'getUsers',
+            undefined,
+            (draftUser: any) => {
+              const findUser = draftUser.data.find(
+                (item) => item.username === arg
+              );
+
+              if (findUser.role.role == 'user') {
+                findUser.role.role = 'admin';
+              } else if (findUser.role.role == 'admin') {
+                findUser.role.role = 'super_admin';
+              }
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          updateUser.undo();
+        }
+      }
+    }),
+    demoteUser: builder.mutation({
+      query: (username) => ({
+        url: `/user/demote`,
+        method: 'Post',
+        body: { username }
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const updateUser = dispatch(
+          userApi.util.updateQueryData(
+            'getUsers',
+            undefined,
+            (draftUser: any) => {
+              const findUser = draftUser.data.find(
+                (item) => item.username === arg
+              );
+              if (findUser.role.role == 'super_admin') {
+                findUser.role.role = 'admin';
+              } else if (findUser.role.role == 'admin') {
+                findUser.role.role = 'user';
+              }
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          updateUser.undo();
+        }
+      }
+    }),
     geRoles: builder.query<any, void>({
       query: () => ({
         url: '/user/roles',
@@ -113,7 +174,9 @@ export const {
   useAddUserMutation,
   useRemoveUserMutation,
   useGetUserQuery,
-  useVerifyUserMutation
+  useVerifyUserMutation,
+  usePromoteUserMutation,
+  useDemoteUserMutation
 } = userApi;
 
 interface SingleUser {
