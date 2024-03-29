@@ -19,7 +19,7 @@ const GeneralMenu = () => {
                 disableRipple
                 component={RouterLink}
                 onClick={closeSidebar}
-                to="/overview"
+                to="/dashboards"
                 startIcon={<DesignServicesTwoToneIcon />}
               >
                 Dashboard
