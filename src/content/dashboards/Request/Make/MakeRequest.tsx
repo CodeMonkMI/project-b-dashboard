@@ -17,8 +17,8 @@ const MakeRequest = () => {
           spacing={4}
         >
           <Grid item xs={6}>
-            <Box sx={{ bgcolor: 'white', boxShadow: 3, p: 3 }}>
-              <h2>Make a request</h2>
+            <Box sx={{ bgcolor: 'white', boxShadow: 3, p: 3, mb: 4 }}>
+              <h2>Need a blood? Make a request</h2>
               <RequestForm />
             </Box>
           </Grid>

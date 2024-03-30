@@ -7,7 +7,7 @@ export interface SingleRole {
 }
 
 export interface FormValues {
-  phoneNo: string;
+  phone: string;
   date: Dayjs;
   reason: string;
   address: string;

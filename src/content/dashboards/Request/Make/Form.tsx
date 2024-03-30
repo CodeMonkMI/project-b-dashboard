@@ -7,71 +7,15 @@ import TextField from '@mui/material/TextField';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import dayjs, { Dayjs } from 'dayjs';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import {
-  useAddUserMutation,
-  useGeRolesQuery
-} from 'src/redux/features/user/userApiSlice';
-import { FormValues, SingleRole } from './types';
+import { useAddRequestMutation } from 'src/redux/features/request/requestApiSlice';
+import { FormValues } from './types';
 
-function BasicDateTimePicker() {
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DateTimePicker onChange={() => {}} value={dayjs('23/02/24')} />
-    </LocalizationProvider>
-  );
-}
-const data: {
-  id: string;
-  value: string;
-}[] = [
-  {
-    id: Math.random().toString(),
-    value: 'A_POSITIVE'
-  },
-  {
-    id: Math.random().toString(),
-    value: 'A_NEGATIVE'
-  },
-  {
-    id: Math.random().toString(),
-    value: 'B_POSITIVE'
-  },
-  {
-    id: Math.random().toString(),
-    value: 'B_NEGATIVE'
-  },
-  {
-    id: Math.random().toString(),
-    value: 'AB_POSITIVE'
-  },
-  {
-    id: Math.random().toString(),
-    value: 'AB_NEGATIVE'
-  },
-  {
-    id: Math.random().toString(),
-    value: 'O_POSITIVE'
-  },
-  {
-    id: Math.random().toString(),
-    value: 'O_NEGATIVE'
-  }
-];
 const RequestForm = () => {
   const navigate = useNavigate();
-
-  const [roles, setRoles] = useState<SingleRole[]>([]);
-  const { data: rolesData, isSuccess } = useGeRolesQuery();
-
-  useEffect(() => {
-    if (isSuccess) {
-      setRoles(rolesData.data);
-    }
-  }, [isSuccess]);
 
   const {
     register,
@@ -83,42 +27,42 @@ const RequestForm = () => {
     setError
   } = useForm<FormValues>({
     defaultValues: {
-      phoneNo: '',
+      phone: '',
       blood: '',
       email: '',
       firstName: '',
       lastName: '',
-      date: dayjs(new Date()),
+      date: dayjs(new Date()).add(3, 'hours').add(15, 'minutes'),
       address: '',
       reason: ''
     }
   });
 
   const [
-    addUser,
-    { isLoading, isSuccess: isAddUserSuccess, isError, error: addUserError }
-  ] = useAddUserMutation();
+    addRequest,
+    { data: responseData, isLoading, isSuccess, isError, error }
+  ] = useAddRequestMutation();
 
   const submitHandler = (values: FormValues) => {
     const data = {
       ...values,
       date: dayjs(values.date).format('YYYY-MM-DDTHH:mm:ss.sssZ')
     };
-    console.log(data);
+    addRequest(data);
   };
 
   useEffect(() => {
-    if (isAddUserSuccess) {
-      clearErrors();
-      reset();
-      navigate('/dashboards/users/all');
+    if (isSuccess) {
+      // clearErrors();
+      // reset();
+      console.log({ responseData });
     }
-  }, [isAddUserSuccess]);
+  }, [isSuccess]);
 
   useEffect(() => {
     if (isError) {
-      if ('status' in addUserError) {
-        const data: FormValues | {} | undefined = addUserError.data;
+      if ('status' in error) {
+        const data: FormValues | {} | undefined = error.data;
         Object.entries(data).map((item: any) => {
           setError(item[0], { message: item[1] });
         });
@@ -131,26 +75,33 @@ const RequestForm = () => {
       {isLoading && <LinearProgress color="primary" />}
       <form onSubmit={handleSubmit(submitHandler)}>
         <Grid container>
-          <Grid xs={12} sx={{ mb: 3 }}>
+          <Grid xs={12} sx={{ mb: 3, mt: 3 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <InputLabel
-                id="demo-simple-select-label2"
-                sx={{ mb: 2 }}
-                required
-              >
-                Date and Time
-              </InputLabel>
               <Controller
                 name="date"
                 control={control}
-                defaultValue={dayjs(new Date()).add(7, 'hours')}
-                rules={{ required: 'This field is required' }}
-                render={({ field: { onChange, value } }) => (
+                defaultValue={dayjs(new Date()).add(3, 'hours')}
+                rules={{
+                  required: 'This field is required',
+                  validate: (value: Dayjs) => {
+                    if (value.isAfter(dayjs(new Date()).add(3, 'hours'))) {
+                      return true;
+                    }
+                    return 'Need a bigger future date';
+                  }
+                }}
+                render={({ field: { onChange, value, ...rest } }) => (
                   <>
                     <DateTimePicker
                       onChange={onChange}
                       value={dayjs(value)}
+                      label="Date and Time"
                       className="width-full"
+                      minDateTime={dayjs(new Date()).add(3, 'hours')}
+                      timeSteps={{
+                        minutes: 1
+                      }}
+                      {...rest}
                     />
                   </>
                 )}
@@ -183,9 +134,9 @@ const RequestForm = () => {
                       {...field}
                     >
                       <MenuItem disabled key={Math.random()}>
-                        Select Role
+                        Select Blood
                       </MenuItem>
-                      {data.map((blood) => (
+                      {BLOOD_GROUPS.map((blood) => (
                         <MenuItem key={blood.id} value={blood.value}>
                           {blood.value.replace('_', ' ')}
                         </MenuItem>
@@ -239,12 +190,12 @@ const RequestForm = () => {
               variant="standard"
               fullWidth
               required
-              error={!!errors.phoneNo}
-              {...register('phoneNo', { required: 'This field is required' })}
+              error={!!errors.phone}
+              {...register('phone', { required: 'This field is required' })}
             />
-            {errors?.phoneNo && (
+            {errors?.phone && (
               <Typography variant="body1" sx={{ mt: 1 }} color={'red'}>
-                {errors.phoneNo.message}
+                {errors.phone.message}
               </Typography>
             )}
           </Grid>
@@ -285,7 +236,13 @@ const RequestForm = () => {
               variant="standard"
               fullWidth
               error={!!errors.email}
-              {...register('email')}
+              {...register('email', {
+                validate: (email: string) => {
+                  if (!email) return true;
+                  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  return emailRegex.test(email) ? true : 'Email must be valid';
+                }
+              })}
             />
             {errors?.email && (
               <Typography variant="body1" sx={{ mt: 1 }} color={'red'}>
@@ -295,8 +252,8 @@ const RequestForm = () => {
           </Grid>
 
           <Grid xs={12} sx={{ mb: 3 }}>
-            <Button variant="contained" type="submit" fullWidth>
-              Create User
+            <Button variant="contained" color="primary" type="submit" fullWidth>
+              Make Request
             </Button>
           </Grid>
         </Grid>
@@ -306,3 +263,40 @@ const RequestForm = () => {
 };
 
 export default RequestForm;
+const BLOOD_GROUPS: {
+  id: string;
+  value: string;
+}[] = [
+  {
+    id: Math.random().toString(),
+    value: 'A_POSITIVE'
+  },
+  {
+    id: Math.random().toString(),
+    value: 'A_NEGATIVE'
+  },
+  {
+    id: Math.random().toString(),
+    value: 'B_POSITIVE'
+  },
+  {
+    id: Math.random().toString(),
+    value: 'B_NEGATIVE'
+  },
+  {
+    id: Math.random().toString(),
+    value: 'AB_POSITIVE'
+  },
+  {
+    id: Math.random().toString(),
+    value: 'AB_NEGATIVE'
+  },
+  {
+    id: Math.random().toString(),
+    value: 'O_POSITIVE'
+  },
+  {
+    id: Math.random().toString(),
+    value: 'O_NEGATIVE'
+  }
+];

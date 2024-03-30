@@ -6,67 +6,31 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo } from 'react';
-import { useGetUsersQuery } from 'src/redux/features/user/userApiSlice';
+import { useGetAllRequestQuery } from 'src/redux/features/request/requestApiSlice';
 import { requestTableDateFormatter } from 'src/utils/dateFormatrer';
-import data from './data';
-interface VisibleDataTypes {
-  id: number | string | any;
-  username: string;
-  email: string;
-  role: string;
-  blood: string;
-  createdAt: string;
-  fullName: string;
-  phoneNo: string;
-  lastDonation: string;
-}
-
-interface USER_DATA_SERVER {
-  id: String;
-  username: String;
-  email: String;
-  createdAt: String;
-  Profile: {
-    firstName: String;
-    lastName: String;
-    displayName: String;
-    fatherName: String;
-    motherName: String;
-    address: String;
-    streetAddress: String;
-    upzila: String;
-    zila: String;
-    phoneNo: String;
-    lastDonation: String;
-    bloodGroup: String;
-    image: String;
-  };
-  role: {
-    name: String;
-    role: String;
-  };
-}
 
 const RequestTable = () => {
-  const { data: userData, isLoading, isSuccess, isError } = useGetUsersQuery();
+  const { data: requestData, isLoading, isError } = useGetAllRequestQuery();
 
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
     if (isLoading || isError) return [];
-    return userData.data.map((a: USER_DATA_SERVER, i: number) => {
-      return {
-        sr: i + 1,
-        id: a.id,
-        username: a.username,
-        email: a.email,
-        role: a.role.name,
-        blood: a.Profile.bloodGroup,
-        createdAt: a.createdAt,
-        phoneNo: a.Profile.phoneNo,
-        fullName: `${a.Profile.firstName} ${a.Profile.lastName}`,
-        lastDonation: a?.Profile?.lastDonation || 'Unknown'
-      };
-    });
-  }, [userData]);
+    return requestData.data
+      .filter((a: REQUEST_DATA_SERVER) => {
+        return a.status !== 'request' && a.status !== 'completed';
+      })
+      .map((a: REQUEST_DATA_SERVER, i: number): VisibleDataTypes => {
+        return {
+          sr: i + 1,
+          id: a.id,
+          fullName: `${a.firstName} ${a.lastName}`,
+          blood: a.blood,
+          phone: a.phone,
+          date: a.date,
+          createdAt: a.createdAt,
+          email: a.email
+        };
+      });
+  }, [requestData]);
 
   const approveRequest = (id: string) => {};
   const declineRequest = (id: string) => {};
@@ -75,7 +39,7 @@ const RequestTable = () => {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <DataGrid
-          rows={data.filter((item) => item.status === 'request')}
+          rows={visibleRows}
           columns={columns({ declineRequest, approveRequest })}
           disableColumnMenu
           rowSelection={false}
@@ -122,14 +86,19 @@ const columns = (props: {
       }
     },
     {
-      field: 'phoneNo',
+      field: 'phone',
       headerName: 'Phone No',
       width: 180
     },
+
     {
-      field: 'email',
-      headerName: 'Email',
-      width: 200
+      field: 'date',
+      headerName: 'Donation Time',
+      width: 230,
+      renderCell: (params) => {
+        return <div>{requestTableDateFormatter(params.row.date)}</div>;
+        //   return <div>{params.row.createdAt}</div>;
+      }
     },
     {
       headerName: 'Request At',
@@ -162,3 +131,34 @@ const columns = (props: {
 };
 
 export default RequestTable;
+interface VisibleDataTypes {
+  id: number | string | any;
+  sr: number | string | any;
+  email: string;
+  blood: string;
+  createdAt: string;
+  fullName: string;
+  phone: string;
+  date: string;
+}
+
+interface REQUEST_DATA_SERVER {
+  address: string;
+  blood: string;
+  createdAt: string;
+  date: string;
+  email: string;
+  firstName: string;
+  id: string;
+  lastName: string;
+  phone: string;
+  reason: string;
+  status: string;
+  requestedBy: {
+    username: string;
+    Profile: {
+      firstName: string;
+      lastName: string;
+    };
+  };
+}
