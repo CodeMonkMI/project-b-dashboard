@@ -98,6 +98,93 @@ export const requestApi = apiSlice.injectEndpoints({
         }
       }
     }),
+    nextStatusRequest: builder.mutation({
+      query: (id) => ({
+        url: `donation/requested/status/next/${id}`,
+        method: 'put'
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const updateRequest = dispatch(
+          requestApi.util.updateQueryData(
+            'getAllRequest',
+            undefined,
+            (draftUser: any) => {
+              const findRequest = draftUser.data.find(
+                (item) => item.id === arg
+              );
+              const status = findRequest.status;
+              if (status === 'verified') {
+                findRequest.status = 'progress';
+              } else if (status === 'progress') {
+                findRequest.status = 'ready';
+              } else if (status === 'hold') {
+                findRequest.status = 'verified';
+              }
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          updateRequest.undo();
+        }
+      }
+    }),
+    prevStatusRequest: builder.mutation({
+      query: (id) => ({
+        url: `donation/requested/status/prev/${id}`,
+        method: 'put'
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const updateRequest = dispatch(
+          requestApi.util.updateQueryData(
+            'getAllRequest',
+            undefined,
+            (draftUser: any) => {
+              const findRequest = draftUser.data.find(
+                (item) => item.id === arg
+              );
+              const status = findRequest.status;
+              if (status === 'ready') {
+                findRequest.status = 'progress';
+              } else if (status === 'progress' || status === 'hold') {
+                findRequest.status = 'verified';
+              }
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          updateRequest.undo();
+        }
+      }
+    }),
+    holdStatusRequest: builder.mutation({
+      query: (id) => ({
+        url: `donation/requested/status/hold/${id}`,
+        method: 'put'
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const updateRequest = dispatch(
+          requestApi.util.updateQueryData(
+            'getAllRequest',
+            undefined,
+            (draftUser: any) => {
+              const findRequest = draftUser.data.find(
+                (item) => item.id === arg
+              );
+              findRequest.status = 'hold';
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          updateRequest.undo();
+        }
+      }
+    }),
     updateRequest: builder.mutation({
       query: (username) => ({
         url: `/user/promote`,
@@ -138,7 +225,10 @@ export const {
   useGetRequestQuery,
   useRemoveRequestMutation,
   useUpdateRequestMutation,
-  useApproveRequestMutation
+  useApproveRequestMutation,
+  useNextStatusRequestMutation,
+  usePrevStatusRequestMutation,
+  useHoldStatusRequestMutation
 } = requestApi;
 
 interface SingleUser {

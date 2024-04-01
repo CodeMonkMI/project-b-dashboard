@@ -1,5 +1,6 @@
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import HistoryIcon from '@mui/icons-material/History';
@@ -10,18 +11,20 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
-import { useGetAllRequestQuery } from 'src/redux/features/request/requestApiSlice';
+import {
+  useGetAllRequestQuery,
+  useHoldStatusRequestMutation,
+  useNextStatusRequestMutation,
+  usePrevStatusRequestMutation
+} from 'src/redux/features/request/requestApiSlice';
 import { requestTableDateFormatter } from 'src/utils/dateFormatrer';
 import SingleHistory from './SingleHistory';
-
 const RequestTable = () => {
-  const {
-    data: requestData,
-    isLoading,
-    isSuccess,
-    isError
-  } = useGetAllRequestQuery();
+  const { data: requestData, isLoading, isError } = useGetAllRequestQuery();
   const [isHistoryOpen, setIsHistoryOpen] = useState<string | null>(null);
+  const [prevStatusRequest] = usePrevStatusRequestMutation();
+  const [nextStatusRequest] = useNextStatusRequestMutation();
+  const [holdStatusRequest] = useHoldStatusRequestMutation();
 
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
     if (isLoading || isError) return [];
@@ -47,8 +50,15 @@ const RequestTable = () => {
   const historyOpen = (id: string) => {
     setIsHistoryOpen(id);
   };
-  const requestUp = (id: string) => {};
-  const requestDown = (id: string) => {};
+  const requestPrev = (id: string) => {
+    prevStatusRequest(id);
+  };
+  const requestNext = (id: string) => {
+    nextStatusRequest(id);
+  };
+  const requestHold = (id: string) => {
+    holdStatusRequest(id);
+  };
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -61,7 +71,12 @@ const RequestTable = () => {
         />
         <DataGrid
           rows={visibleRows}
-          columns={columns({ historyOpen, requestDown, requestUp })}
+          columns={columns({
+            historyOpen,
+            requestPrev,
+            requestNext,
+            requestHold
+          })}
           disableColumnMenu
           rowSelection={false}
           pageSizeOptions={[5, 10, 25, 50, 100]}
@@ -78,10 +93,11 @@ const RequestTable = () => {
 
 const columns = (props: {
   historyOpen: any;
-  requestUp: any;
-  requestDown: any;
+  requestHold: any;
+  requestNext: any;
+  requestPrev: any;
 }): GridColDef[] => {
-  const { historyOpen } = props;
+  const { historyOpen, requestNext, requestPrev, requestHold } = props;
   return [
     {
       field: 'sr',
@@ -175,16 +191,35 @@ const columns = (props: {
               <HistoryIcon />
             </IconButton>
             {/* </Link> */}
-            <IconButton aria-label="edit" color="primary">
-              <ArrowUpwardIcon />
+            <IconButton
+              aria-label="edit"
+              color="primary"
+              disabled={params.row.status === 'verified'}
+              onClick={() => requestPrev(params.row.id)}
+            >
+              <ArrowBackIosNewIcon />
             </IconButton>
-            <IconButton aria-label="edit" color="warning">
-              <ArrowDownwardIcon />
+            <IconButton
+              aria-label="edit"
+              color="primary"
+              disabled={params.row.status === 'ready'}
+              onClick={() => requestNext(params.row.id)}
+            >
+              <ArrowForwardIosIcon />
             </IconButton>
-            <IconButton aria-label="edit" color="error">
+            <IconButton
+              aria-label="edit"
+              color="error"
+              onClick={() => requestHold(params.row.id)}
+              disabled={params.row.status === 'hold'}
+            >
               <BlockIcon />
             </IconButton>
-            <IconButton aria-label="edit" color="success">
+            <IconButton
+              disabled={params.row.status !== 'ready'}
+              aria-label="edit"
+              color="success"
+            >
               <CheckIcon />
             </IconButton>
           </Stack>
