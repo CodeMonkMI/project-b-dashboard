@@ -18,10 +18,12 @@ import {
   usePrevStatusRequestMutation
 } from 'src/redux/features/request/requestApiSlice';
 import { requestTableDateFormatter } from 'src/utils/dateFormatrer';
+import AssignDonor from './AssignDonor';
 import SingleHistory from './SingleHistory';
 const RequestTable = () => {
   const { data: requestData, isLoading, isError } = useGetAllRequestQuery();
   const [isHistoryOpen, setIsHistoryOpen] = useState<string | null>(null);
+  const [isAssignedOpen, setIsAssignOpen] = useState<string | null>(null);
   const [prevStatusRequest] = usePrevStatusRequestMutation();
   const [nextStatusRequest] = useNextStatusRequestMutation();
   const [holdStatusRequest] = useHoldStatusRequestMutation();
@@ -47,18 +49,14 @@ const RequestTable = () => {
       });
   }, [requestData]);
 
-  const historyOpen = (id: string) => {
-    setIsHistoryOpen(id);
-  };
-  const requestPrev = (id: string) => {
-    prevStatusRequest(id);
-  };
-  const requestNext = (id: string) => {
-    nextStatusRequest(id);
-  };
-  const requestHold = (id: string) => {
-    holdStatusRequest(id);
-  };
+  const assignedBlood = useMemo(() => {
+    if (!isAssignedOpen) return '';
+    const data: REQUEST_DATA_SERVER | undefined = requestData.data.find(
+      (item: REQUEST_DATA_SERVER) => item.id === isAssignedOpen
+    );
+    if (!data) return '';
+    return data.blood;
+  }, [isAssignedOpen, requestData]);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -69,13 +67,22 @@ const RequestTable = () => {
             setIsHistoryOpen(null);
           }}
         />
+        <AssignDonor
+          open={!!isAssignedOpen}
+          handleClose={() => {
+            setIsAssignOpen(null);
+          }}
+          blood={assignedBlood}
+          requestId={isAssignedOpen}
+        />
         <DataGrid
           rows={visibleRows}
           columns={columns({
-            historyOpen,
-            requestPrev,
-            requestNext,
-            requestHold
+            historyOpen: setIsHistoryOpen,
+            requestPrev: prevStatusRequest,
+            requestNext: nextStatusRequest,
+            requestHold: holdStatusRequest,
+            assignedOpen: setIsAssignOpen
           })}
           disableColumnMenu
           rowSelection={false}
@@ -96,8 +103,10 @@ const columns = (props: {
   requestHold: any;
   requestNext: any;
   requestPrev: any;
+  assignedOpen: any;
 }): GridColDef[] => {
-  const { historyOpen, requestNext, requestPrev, requestHold } = props;
+  const { historyOpen, requestNext, requestPrev, requestHold, assignedOpen } =
+    props;
   return [
     {
       field: 'sr',
@@ -121,7 +130,7 @@ const columns = (props: {
           ready: 'primary',
           hold: 'secondary',
           completed: 'success',
-          assigned: 'assigned'
+          assigned: 'primary'
         };
         return (
           <div>
@@ -215,7 +224,7 @@ const columns = (props: {
                 aria-label="edit"
                 color="primary"
                 disabled={params.row.status !== 'ready'}
-                onClick={() => requestNext(params.row.id)}
+                onClick={() => assignedOpen(params.row.id)}
               >
                 <PersonAddAltIcon />
               </IconButton>
