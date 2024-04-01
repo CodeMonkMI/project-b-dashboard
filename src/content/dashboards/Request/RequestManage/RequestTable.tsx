@@ -1,9 +1,9 @@
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import HistoryIcon from '@mui/icons-material/History';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -120,7 +120,8 @@ const columns = (props: {
           progress: 'warning',
           ready: 'primary',
           hold: 'secondary',
-          completed: 'success'
+          completed: 'success',
+          assigned: 'assigned'
         };
         return (
           <div>
@@ -199,14 +200,26 @@ const columns = (props: {
             >
               <ArrowBackIosNewIcon />
             </IconButton>
-            <IconButton
-              aria-label="edit"
-              color="primary"
-              disabled={params.row.status === 'ready'}
-              onClick={() => requestNext(params.row.id)}
-            >
-              <ArrowForwardIosIcon />
-            </IconButton>
+            {params.row.status !== 'ready' && (
+              <IconButton
+                aria-label="edit"
+                color="primary"
+                disabled={params.row.status === 'ready'}
+                onClick={() => requestNext(params.row.id)}
+              >
+                <ArrowForwardIosIcon />
+              </IconButton>
+            )}
+            {params.row.status === 'ready' && (
+              <IconButton
+                aria-label="edit"
+                color="primary"
+                disabled={params.row.status !== 'ready'}
+                onClick={() => requestNext(params.row.id)}
+              >
+                <PersonAddAltIcon />
+              </IconButton>
+            )}
             <IconButton
               aria-label="edit"
               color="error"
@@ -215,13 +228,15 @@ const columns = (props: {
             >
               <BlockIcon />
             </IconButton>
-            <IconButton
-              disabled={params.row.status !== 'ready'}
-              aria-label="edit"
-              color="success"
-            >
-              <CheckIcon />
-            </IconButton>
+            {params.row.status === 'assigned' && (
+              <IconButton
+                disabled={params.row.status !== 'ready'}
+                aria-label="edit"
+                color="success"
+              >
+                <CheckIcon />
+              </IconButton>
+            )}
           </Stack>
         );
       }
