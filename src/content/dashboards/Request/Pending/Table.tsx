@@ -6,17 +6,23 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo } from 'react';
-import { useGetAllRequestQuery } from 'src/redux/features/request/requestApiSlice';
+import {
+  useApproveRequestMutation,
+  useGetAllRequestQuery,
+  useRemoveRequestMutation
+} from 'src/redux/features/request/requestApiSlice';
 import { requestTableDateFormatter } from 'src/utils/dateFormatrer';
 
 const RequestTable = () => {
   const { data: requestData, isLoading, isError } = useGetAllRequestQuery();
+  const [removeRequest] = useRemoveRequestMutation();
+  const [approve] = useApproveRequestMutation();
 
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
     if (isLoading || isError) return [];
     return requestData.data
       .filter((a: REQUEST_DATA_SERVER) => {
-        return a.status !== 'request' && a.status !== 'completed';
+        return a.status === 'request';
       })
       .map((a: REQUEST_DATA_SERVER, i: number): VisibleDataTypes => {
         return {
@@ -32,15 +38,22 @@ const RequestTable = () => {
       });
   }, [requestData]);
 
-  const approveRequest = (id: string) => {};
-  const declineRequest = (id: string) => {};
+  const approveRequestHandler = (id: string) => {
+    approve(id);
+  };
+  const declineRequestHandler = (id: string) => {
+    removeRequest(id);
+  };
 
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <DataGrid
           rows={visibleRows}
-          columns={columns({ declineRequest, approveRequest })}
+          columns={columns({
+            declineRequest: declineRequestHandler,
+            approveRequest: approveRequestHandler
+          })}
           disableColumnMenu
           rowSelection={false}
           pageSizeOptions={[5, 10, 25, 50, 100]}
@@ -97,7 +110,6 @@ const columns = (props: {
       width: 230,
       renderCell: (params) => {
         return <div>{requestTableDateFormatter(params.row.date)}</div>;
-        //   return <div>{params.row.createdAt}</div>;
       }
     },
     {
@@ -106,7 +118,6 @@ const columns = (props: {
       width: 230,
       renderCell: (params) => {
         return <div>{requestTableDateFormatter(params.row.createdAt)}</div>;
-        //   return <div>{params.row.createdAt}</div>;
       }
     },
     {
@@ -117,10 +128,18 @@ const columns = (props: {
       renderCell: (params) => {
         return (
           <Stack spacing={0.5} direction="row">
-            <IconButton aria-label="edit" color="success">
+            <IconButton
+              aria-label="edit"
+              color="success"
+              onClick={() => approveRequest(params.row.id)}
+            >
               <CheckIcon />
             </IconButton>
-            <IconButton aria-label="edit" color="error">
+            <IconButton
+              aria-label="edit"
+              color="error"
+              onClick={() => declineRequest(params.row.id)}
+            >
               <BlockIcon />
             </IconButton>
           </Stack>

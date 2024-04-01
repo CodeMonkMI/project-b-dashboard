@@ -46,22 +46,22 @@ export const requestApi = apiSlice.injectEndpoints({
       // }
     }),
     removeRequest: builder.mutation({
-      query: (username) => ({
-        url: `/donation/requested/${username}/confirm`,
+      query: (id) => ({
+        url: `/donation/requested/${id}`,
         method: 'DELETE'
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        const updateUser = dispatch(
+        const updateRequest = dispatch(
           requestApi.util.updateQueryData(
             'getAllRequest',
             undefined,
             (draftUser: any) => {
-              const newUsers = draftUser.data.filter(
-                (user) => user.username !== arg
+              const newRequests = draftUser.data.filter(
+                (request) => request.id !== arg
               );
               return {
                 ...draftUser,
-                data: newUsers
+                data: newRequests
               };
             }
           )
@@ -69,32 +69,32 @@ export const requestApi = apiSlice.injectEndpoints({
         try {
           await queryFulfilled;
         } catch (err) {
-          updateUser.undo();
+          updateRequest.undo();
         }
       }
     }),
-    verifyRequest: builder.mutation({
-      query: (username) => ({
-        url: `/user/verify/${username}`,
-        method: 'PATCH'
+    approveRequest: builder.mutation({
+      query: (id) => ({
+        url: `donation/requested/approve/${id}`,
+        method: 'put'
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        const updateUser = dispatch(
+        const updateRequest = dispatch(
           requestApi.util.updateQueryData(
             'getAllRequest',
             undefined,
             (draftUser: any) => {
-              const findUser = draftUser.data.find(
-                (item) => item.username === arg
+              const findRequest = draftUser.data.find(
+                (item) => item.id === arg
               );
-              findUser.isVerified = true;
+              findRequest.status = 'verified';
             }
           )
         );
         try {
           await queryFulfilled;
         } catch (err) {
-          updateUser.undo();
+          updateRequest.undo();
         }
       }
     }),
@@ -138,7 +138,7 @@ export const {
   useGetRequestQuery,
   useRemoveRequestMutation,
   useUpdateRequestMutation,
-  useVerifyRequestMutation
+  useApproveRequestMutation
 } = requestApi;
 
 interface SingleUser {
