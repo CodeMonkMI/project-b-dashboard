@@ -1,8 +1,18 @@
 import CheckIcon from '@mui/icons-material/Check';
-import { Box, Grid, IconButton, Modal, Stack } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Modal,
+  Stack
+} from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { useAssignDonorRequestMutation } from 'src/redux/features/request/requestApiSlice';
 import { useGetUsersQuery } from 'src/redux/features/user/userApiSlice';
+
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -17,13 +27,20 @@ const style = {
   pb: 3,
   borderRadius: 2
 };
+
 const AssignDonor: React.FC<{
   open: boolean;
   handleClose: () => void;
   blood: string;
   requestId: string;
 }> = ({ open, handleClose, blood, requestId }) => {
-  const { data, isLoading, isError, isSuccess } = useGetUsersQuery();
+  const { data, isLoading, isError } = useGetUsersQuery();
+  const [assignDonor, { isSuccess }] = useAssignDonorRequestMutation();
+
+  useEffect(() => {
+    if (isSuccess) handleClose();
+  }, [isSuccess]);
+
   const visibleRows = useMemo(() => {
     if (isLoading || isError) return [];
     return (
@@ -53,12 +70,39 @@ const AssignDonor: React.FC<{
       >
         <Box sx={{ ...style, width: 780 }}>
           <Box sx={{ position: 'relative' }}>
-            <p>{blood}</p>
+            <p>{requestId}</p>
+            <Stack
+              direction={'row'}
+              sx={{ mb: 4 }}
+              gap={2}
+              justifyContent={'space-between'}
+            >
+              <Avatar
+                alt="Remy Sharp"
+                src="/static/images/avatar/1.jpg"
+                sx={{ height: 120, width: 120 }}
+              />
+              <Box component={'div'}>
+                <p>Name: </p>
+                <p>Address</p>
+                <p>Phone Number</p>
+                <p></p>
+              </Box>
+              <Box component={'div'}>
+                <Stack direction={'column'} gap={2}>
+                  <Button variant="contained" color="primary" size="small">
+                    Deselect
+                  </Button>
+                </Stack>
+              </Box>
+            </Stack>
             <Grid container gap={2}>
               <DataGrid
                 rows={visibleRows}
                 columns={columns({
-                  assignedOpen: () => {}
+                  assignDonor: (user: string) => {
+                    assignDonor({ data: { donor: user }, id: requestId });
+                  }
                 })}
                 disableColumnMenu
                 rowSelection={false}
@@ -109,8 +153,8 @@ interface USER_DATA_SERVER {
   };
 }
 
-const columns = (props: { assignedOpen: any }): GridColDef[] => {
-  const { assignedOpen } = props;
+const columns = (props: { assignDonor: any }): GridColDef[] => {
+  const { assignDonor } = props;
   return [
     {
       field: 'sr',
@@ -135,7 +179,11 @@ const columns = (props: { assignedOpen: any }): GridColDef[] => {
       renderCell: (params) => {
         return (
           <Stack spacing={0.5} direction="row">
-            <IconButton aria-label="edit" color="success">
+            <IconButton
+              aria-label="edit"
+              color="success"
+              onClick={() => assignDonor(params.row.id)}
+            >
               <CheckIcon />
             </IconButton>
           </Stack>

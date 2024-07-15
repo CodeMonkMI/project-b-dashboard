@@ -1,4 +1,5 @@
 import { apiSlice } from '../api/apiSlice';
+import { loadDonor } from './requestSlice';
 
 export const requestApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -87,7 +88,7 @@ export const requestApi = apiSlice.injectEndpoints({
               const findRequest = draftUser.data.find(
                 (item) => item.id === arg
               );
-              findRequest.status = 'verified';
+              findRequest.status = 'progress';
             }
           )
         );
@@ -98,9 +99,9 @@ export const requestApi = apiSlice.injectEndpoints({
         }
       }
     }),
-    nextStatusRequest: builder.mutation({
+    declineRequest: builder.mutation({
       query: (id) => ({
-        url: `donation/requested/status/next/${id}`,
+        url: `donation/requested/decline/${id}`,
         method: 'put'
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
@@ -112,14 +113,7 @@ export const requestApi = apiSlice.injectEndpoints({
               const findRequest = draftUser.data.find(
                 (item) => item.id === arg
               );
-              const status = findRequest.status;
-              if (status === 'verified') {
-                findRequest.status = 'progress';
-              } else if (status === 'progress') {
-                findRequest.status = 'ready';
-              } else if (status === 'hold') {
-                findRequest.status = 'verified';
-              }
+              findRequest.status = 'declined';
             }
           )
         );
@@ -130,9 +124,9 @@ export const requestApi = apiSlice.injectEndpoints({
         }
       }
     }),
-    prevStatusRequest: builder.mutation({
+    makeProgressRequest: builder.mutation({
       query: (id) => ({
-        url: `donation/requested/status/prev/${id}`,
+        url: `donation/requested/progress/${id}`,
         method: 'put'
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
@@ -144,12 +138,35 @@ export const requestApi = apiSlice.injectEndpoints({
               const findRequest = draftUser.data.find(
                 (item) => item.id === arg
               );
-              const status = findRequest.status;
-              if (status === 'ready') {
-                findRequest.status = 'progress';
-              } else if (status === 'progress' || status === 'hold') {
-                findRequest.status = 'verified';
-              }
+              findRequest.status = 'progress';
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          updateRequest.undo();
+        }
+      }
+    }),
+    assignDonorRequest: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `donation/requested/assign/${id}`,
+        method: 'put',
+        body: data
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const updateRequest = dispatch(
+          requestApi.util.updateQueryData(
+            'getAllRequest',
+            undefined,
+            (draftUser: any) => {
+              console.log(arg);
+              const findRequest = draftUser.data.find(
+                (item) => item.id === arg.id
+              );
+
+              findRequest.status = 'ready';
             }
           )
         );
@@ -162,7 +179,7 @@ export const requestApi = apiSlice.injectEndpoints({
     }),
     holdStatusRequest: builder.mutation({
       query: (id) => ({
-        url: `donation/requested/status/hold/${id}`,
+        url: `donation/requested/hold/${id}`,
         method: 'put'
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
@@ -215,6 +232,21 @@ export const requestApi = apiSlice.injectEndpoints({
           updateUser.undo();
         }
       }
+    }),
+    findDonor: builder.mutation({
+      query: (body) => ({
+        url: `/donation/requested/find-donor`,
+        method: 'Post',
+        body: body
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const data = await queryFulfilled;
+          dispatch(loadDonor(data.data.data));
+        } catch (err) {
+          // there is an error
+        }
+      }
     })
   })
 });
@@ -226,9 +258,11 @@ export const {
   useRemoveRequestMutation,
   useUpdateRequestMutation,
   useApproveRequestMutation,
-  useNextStatusRequestMutation,
-  usePrevStatusRequestMutation,
-  useHoldStatusRequestMutation
+  useHoldStatusRequestMutation,
+  useDeclineRequestMutation,
+  useMakeProgressRequestMutation,
+  useAssignDonorRequestMutation,
+  useFindDonorMutation
 } = requestApi;
 
 interface SingleUser {

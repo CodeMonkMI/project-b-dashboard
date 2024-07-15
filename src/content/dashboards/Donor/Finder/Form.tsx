@@ -10,8 +10,9 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import { useAddUserMutation } from 'src/redux/features/user/userApiSlice';
+import { useFindDonorMutation } from 'src/redux/features/request/requestApiSlice';
 import { FormValues } from './types';
+
 const data: {
   id: string;
   value: string;
@@ -49,6 +50,7 @@ const data: {
     value: 'O_NEGATIVE'
   }
 ];
+
 const AddUserForm = () => {
   const navigate = useNavigate();
 
@@ -66,31 +68,30 @@ const AddUserForm = () => {
     }
   });
 
-  const [
-    addUser,
-    { isLoading, isSuccess: isAddUserSuccess, isError, error: addUserError }
-  ] = useAddUserMutation();
+  const [findDonor, { isLoading, isSuccess, isError, error }] =
+    useFindDonorMutation();
 
   const submitHandler = (values: FormValues) => {
     const data = {
       ...values,
       date: dayjs(values.date).format('YYYY-MM-DDTHH:mm:ss.sssZ')
     };
-    console.log(data);
+    findDonor(data);
   };
 
   useEffect(() => {
-    if (isAddUserSuccess) {
+    if (isSuccess) {
       clearErrors();
       reset();
+
       // navigate('/dashboards/users/all');
     }
-  }, [isAddUserSuccess]);
+  }, [isSuccess]);
 
   useEffect(() => {
     if (isError) {
-      if ('status' in addUserError) {
-        const data: FormValues | {} | undefined = addUserError.data;
+      if ('status' in error) {
+        const data: FormValues | {} | undefined = error.data;
         Object.entries(data).map((item: any) => {
           setError(item[0], { message: item[1] });
         });
@@ -101,6 +102,7 @@ const AddUserForm = () => {
   return (
     <div>
       {isLoading && <LinearProgress color="primary" />}
+
       <form onSubmit={handleSubmit(submitHandler)}>
         <Grid container gap={4}>
           <Grid xs={12} lg={4} sx={{ mb: 3 }}>
@@ -150,7 +152,7 @@ const AddUserForm = () => {
                   required: 'This field is required',
                   validate: (value: Dayjs) => {
                     if (value.isAfter(dayjs(new Date()).add(3, 'hours'))) {
-                      return false;
+                      return true;
                     }
                     return 'Need a bigger value';
                   }

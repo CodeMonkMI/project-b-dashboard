@@ -9,69 +9,55 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
-import { useGetUsersQuery } from 'src/redux/features/user/userApiSlice';
 
-import data from './data';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/redux/app/store';
 interface VisibleDataTypes {
   id: number | string | any;
-  username: string;
-  email: string;
-  role: string;
   blood: string;
-  createdAt: string;
   fullName: string;
   phoneNo: string;
-  lastDonation: string;
+  address: string;
 }
 
 interface USER_DATA_SERVER {
-  id: String;
-  username: String;
-  email: String;
-  createdAt: String;
-  Profile: {
-    firstName: String;
-    lastName: String;
-    displayName: String;
-    fatherName: String;
-    motherName: String;
-    address: String;
-    streetAddress: String;
-    upzila: String;
-    zila: String;
-    phoneNo: String;
-    lastDonation: String;
-    bloodGroup: String;
-    image: String;
-  };
-  role: {
-    name: String;
-    role: String;
-  };
+  id: string;
+  requestedById: string;
+  donorId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  date: string;
+  blood: string;
+  reason: string;
+  verifiedById: string;
+  status: string;
+  deleteAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const DonorFinderTable = () => {
-  const { data: userData, isLoading, isSuccess, isError } = useGetUsersQuery();
+  const donors = useSelector((state: RootState) => state.request.donors);
   const [isHistoryOpen, setIsHistoryOpen] = useState<string | null>(null);
 
-  const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
-    if (isLoading || isError) return [];
-    return userData.data.map((a: USER_DATA_SERVER, i: number) => {
+  const visibleRows: VisibleDataTypes[] = useMemo<
+    VisibleDataTypes[]
+  >((): VisibleDataTypes[] => {
+    return donors.map((a: USER_DATA_SERVER, i: number) => {
       return {
         sr: i + 1,
-        id: a.id,
-        username: a.username,
-        email: a.email,
-        role: a.role.name,
-        blood: a.Profile.bloodGroup,
-        createdAt: a.createdAt,
-        phoneNo: a.Profile.phoneNo,
-        fullName: `${a.Profile.firstName} ${a.Profile.lastName}`,
-        lastDonation: a?.Profile?.lastDonation || 'Unknown'
+        id: a?.id,
+        blood: a.blood,
+        fullName: `${a.firstName} ${a.lastName}`,
+        phoneNo: a.phone,
+        address: a.address
       };
     });
-  }, [userData]);
-
+  }, [donors]);
+  console.table(visibleRows);
   const historyOpen = (id: string) => {
     setIsHistoryOpen(id);
   };
@@ -82,7 +68,7 @@ const DonorFinderTable = () => {
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
         <DataGrid
-          rows={data}
+          rows={visibleRows}
           columns={columns({ historyOpen, requestDown, requestUp })}
           disableColumnMenu
           rowSelection={false}

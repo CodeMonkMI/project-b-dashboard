@@ -8,14 +8,14 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo } from 'react';
 import {
   useApproveRequestMutation,
-  useGetAllRequestQuery,
-  useRemoveRequestMutation
+  useDeclineRequestMutation,
+  useGetAllRequestQuery
 } from 'src/redux/features/request/requestApiSlice';
 import { requestTableDateFormatter } from 'src/utils/dateFormatrer';
 
 const RequestTable = () => {
   const { data: requestData, isLoading, isError } = useGetAllRequestQuery();
-  const [removeRequest] = useRemoveRequestMutation();
+  const [declinedRequest] = useDeclineRequestMutation();
   const [approve] = useApproveRequestMutation();
 
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
@@ -42,7 +42,7 @@ const RequestTable = () => {
     approve(id);
   };
   const declineRequestHandler = (id: string) => {
-    removeRequest(id);
+    declinedRequest(id);
   };
 
   return (
