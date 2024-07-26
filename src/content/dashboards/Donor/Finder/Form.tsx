@@ -9,9 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs, { Dayjs } from 'dayjs';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
-import { useFindDonorMutation } from 'src/redux/features/request/requestApiSlice';
-import { FormValues } from './types';
+import { FindDonorFromTypes, FormValues } from './types';
 
 const data: {
   id: string;
@@ -51,9 +49,8 @@ const data: {
   }
 ];
 
-const AddUserForm = () => {
-  const navigate = useNavigate();
-
+const FindDonorForm: React.FC<FindDonorFromTypes> = (props) => {
+  const { findDonor, isLoading, isSuccess, isError, error } = props;
   const {
     control,
     formState: { errors },
@@ -68,11 +65,8 @@ const AddUserForm = () => {
     }
   });
 
-  const [findDonor, { isLoading, isSuccess, isError, error }] =
-    useFindDonorMutation();
-
   const submitHandler = (values: FormValues) => {
-    const data = {
+    const data: any = {
       ...values,
       date: dayjs(values.date).format('YYYY-MM-DDTHH:mm:ss.sssZ')
     };
@@ -82,9 +76,6 @@ const AddUserForm = () => {
   useEffect(() => {
     if (isSuccess) {
       clearErrors();
-      reset();
-
-      // navigate('/dashboards/users/all');
     }
   }, [isSuccess]);
 
@@ -191,4 +182,4 @@ const AddUserForm = () => {
   );
 };
 
-export default AddUserForm;
+export default FindDonorForm;

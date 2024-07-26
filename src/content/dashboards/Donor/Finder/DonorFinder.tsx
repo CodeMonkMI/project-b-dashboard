@@ -1,9 +1,12 @@
 import { Box, Container, Grid } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
+import { useFindDonorMutation } from 'src/redux/features/request/requestApiSlice';
 import DonorFinderTable from './DonorFinderTable';
-import AddUserForm from './Form';
+import FindDonorForm from './Form';
 
 const DonorFinder = () => {
+  const [findDonor, { isLoading, isSuccess, isError, error, data }] =
+    useFindDonorMutation();
   return (
     <div>
       <Helmet>
@@ -20,9 +23,12 @@ const DonorFinder = () => {
           <Grid item xs={12}>
             <Box sx={{ bgcolor: 'white', boxShadow: 3, p: 3 }}>
               <h2>Find Donor</h2>
-              <AddUserForm />
+              <FindDonorForm
+                findDonor={findDonor}
+                {...{ isLoading, isSuccess, isError, error }}
+              />
               <h2>Donor List</h2>
-              <DonorFinderTable />
+              <DonorFinderTable data={isSuccess ? data.data : []} />
             </Box>
           </Grid>
         </Grid>

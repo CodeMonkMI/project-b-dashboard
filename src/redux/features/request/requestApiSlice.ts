@@ -1,5 +1,4 @@
 import { apiSlice } from '../api/apiSlice';
-import { loadDonor } from './requestSlice';
 
 export const requestApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -238,15 +237,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `/donation/requested/find-donor`,
         method: 'Post',
         body: body
-      }),
-      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        try {
-          const data = await queryFulfilled;
-          dispatch(loadDonor(data.data.data));
-        } catch (err) {
-          // there is an error
-        }
-      }
+      })
     })
   })
 });

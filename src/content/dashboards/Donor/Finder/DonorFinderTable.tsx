@@ -10,8 +10,6 @@ import Stack from '@mui/material/Stack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
 
-import { useSelector } from 'react-redux';
-import { RootState } from 'src/redux/app/store';
 interface VisibleDataTypes {
   id: number | string | any;
   blood: string;
@@ -22,38 +20,47 @@ interface VisibleDataTypes {
 
 interface USER_DATA_SERVER {
   id: string;
-  requestedById: string;
-  donorId: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  date: string;
-  blood: string;
-  reason: string;
-  verifiedById: string;
-  status: string;
-  deleteAt: string;
-  createdAt: string;
-  updatedAt: string;
+  username: string;
+  Profile: {
+    bloodGroup: string;
+    address?: string;
+    zila?: string;
+    upzila?: string;
+    displayName?: string;
+    phoneNo?: string;
+    firstName: string;
+    lastName: string;
+  };
 }
 
-const DonorFinderTable = () => {
-  const donors = useSelector((state: RootState) => state.request.donors);
+const DonorFinderTable: React.FC<{
+  data: USER_DATA_SERVER[];
+}> = (props) => {
+  const { data } = props;
+  const donors = data;
   const [isHistoryOpen, setIsHistoryOpen] = useState<string | null>(null);
 
   const visibleRows: VisibleDataTypes[] = useMemo<
     VisibleDataTypes[]
   >((): VisibleDataTypes[] => {
     return donors.map((a: USER_DATA_SERVER, i: number) => {
+      const {
+        firstName,
+        lastName,
+        bloodGroup,
+        address,
+        upzila,
+        zila,
+        phoneNo,
+        displayName
+      } = a?.Profile || {};
       return {
         sr: i + 1,
         id: a?.id,
-        blood: a.blood,
-        fullName: `${a.firstName} ${a.lastName}`,
-        phoneNo: a.phone,
-        address: a.address
+        blood: bloodGroup,
+        fullName: displayName || `${firstName} ${lastName}`,
+        phoneNo: phoneNo || '-',
+        address: `${address || '-'} ${upzila || '-'} ${zila || '-'}` || ''
       };
     });
   }, [donors]);
