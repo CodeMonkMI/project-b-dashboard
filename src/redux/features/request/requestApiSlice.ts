@@ -11,7 +11,7 @@ export const requestApi = apiSlice.injectEndpoints({
         }
       })
     }),
-    getRequest: builder.query<SingleUser, string>({
+    getRequest: builder.query<any, string>({
       query: (id: string) => ({
         url: `/donation/requested/${id}`,
         method: 'get',
@@ -138,6 +138,7 @@ export const requestApi = apiSlice.injectEndpoints({
                 (item) => item.id === arg
               );
               findRequest.status = 'progress';
+              findRequest.donor = null;
             }
           )
         );
@@ -155,25 +156,24 @@ export const requestApi = apiSlice.injectEndpoints({
         body: data
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        const updateRequest = dispatch(
-          requestApi.util.updateQueryData(
-            'getAllRequest',
-            undefined,
-            (draftUser: any) => {
-              console.log(arg);
-              const findRequest = draftUser.data.find(
-                (item) => item.id === arg.id
-              );
-
-              findRequest.status = 'ready';
-            }
-          )
-        );
         try {
-          await queryFulfilled;
-        } catch (err) {
-          updateRequest.undo();
-        }
+          const { data } = await queryFulfilled;
+
+          dispatch(
+            requestApi.util.updateQueryData(
+              'getAllRequest',
+              undefined,
+              (draftUser: any) => {
+                console.log(arg);
+                const findRequest = draftUser.data.find(
+                  (item) => item.id === arg.id
+                );
+                findRequest.status = 'ready';
+                findRequest.donor = data.data;
+              }
+            )
+          );
+        } catch (err) {}
       }
     }),
     holdStatusRequest: builder.mutation({
@@ -191,6 +191,7 @@ export const requestApi = apiSlice.injectEndpoints({
                 (item) => item.id === arg
               );
               findRequest.status = 'hold';
+              findRequest.donor = null;
             }
           )
         );

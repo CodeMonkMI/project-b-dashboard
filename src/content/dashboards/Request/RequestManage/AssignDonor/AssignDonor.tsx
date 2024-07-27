@@ -1,17 +1,13 @@
 import CheckIcon from '@mui/icons-material/Check';
-import {
-  Avatar,
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  Modal,
-  Stack
-} from '@mui/material';
+import { Box, Grid, IconButton, Modal, Stack, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import React, { useEffect, useMemo } from 'react';
-import { useAssignDonorRequestMutation } from 'src/redux/features/request/requestApiSlice';
-import { useGetUsersQuery } from 'src/redux/features/user/userApiSlice';
+import {
+  useAssignDonorRequestMutation,
+  useFindDonorMutation
+} from 'src/redux/features/request/requestApiSlice';
+import { REQUEST_DATA_SERVER } from '../RequestTable';
+import Top from './Top';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -28,13 +24,46 @@ const style = {
   borderRadius: 2
 };
 
-const AssignDonor: React.FC<{
+interface DONOR_SINGLE_DATA_SERVER_TYPE {
+  id: string;
+  username: string;
+  Profile: {
+    bloodGroup: string;
+    address?: string;
+    zila?: string;
+    upzila?: string;
+    displayName?: string;
+    phoneNo?: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+
+interface AssignDonorTypes {
   open: boolean;
   handleClose: () => void;
   blood: string;
   requestId: string;
-}> = ({ open, handleClose, blood, requestId }) => {
-  const { data, isLoading, isError } = useGetUsersQuery();
+  requestDate: string;
+  requestItem: REQUEST_DATA_SERVER | undefined;
+}
+
+const AssignDonor: React.FC<AssignDonorTypes> = (props) => {
+  // props
+  const { open, handleClose, blood, requestId, requestDate, requestItem } =
+    props;
+
+  const [
+    findDonor,
+    { isSuccess: ifDonorFindSuccess, error, data: findDonorList }
+  ] = useFindDonorMutation();
+
+  useEffect(() => {
+    if (blood && requestDate) {
+      findDonor({ blood, date: requestDate });
+    }
+  }, [blood, requestDate]);
+
   const [assignDonor, { isSuccess }] = useAssignDonorRequestMutation();
 
   useEffect(() => {
@@ -42,24 +71,23 @@ const AssignDonor: React.FC<{
   }, [isSuccess]);
 
   const visibleRows = useMemo(() => {
-    if (isLoading || isError) return [];
+    if (!ifDonorFindSuccess) return [];
     return (
-      data?.data?.reduce(
-        (acc: VisibleDataTypes[], a: USER_DATA_SERVER, i: number) => {
-          if (a.isVerified && a.Profile.bloodGroup === blood) {
-            acc.push({
-              sr: acc.length + 1,
-              id: a.id,
-              phoneNo: a.Profile.phoneNo,
-              fullName: `${a.Profile.firstName} ${a.Profile.lastName}`
-            });
-          }
+      findDonorList?.data?.reduce(
+        (acc: VisibleDataTypes[], a: DONOR_SINGLE_DATA_SERVER_TYPE) => {
+          acc.push({
+            sr: acc.length + 1,
+            id: a.id,
+            phoneNo: a.Profile.phoneNo || '-',
+            fullName: `${a.Profile.firstName} ${a.Profile.lastName}`
+          });
+
           return acc;
         },
         []
       ) || []
     );
-  }, [data, blood]);
+  }, [findDonorList, blood, ifDonorFindSuccess]);
   return (
     <div>
       <Modal
@@ -70,46 +98,28 @@ const AssignDonor: React.FC<{
       >
         <Box sx={{ ...style, width: 780 }}>
           <Box sx={{ position: 'relative' }}>
-            <p>{requestId}</p>
-            <Stack
-              direction={'row'}
-              sx={{ mb: 4 }}
-              gap={2}
-              justifyContent={'space-between'}
-            >
-              <Avatar
-                alt="Remy Sharp"
-                src="/static/images/avatar/1.jpg"
-                sx={{ height: 120, width: 120 }}
-              />
-              <Box component={'div'}>
-                <p>Name: </p>
-                <p>Address</p>
-                <p>Phone Number</p>
-                <p></p>
-              </Box>
-              <Box component={'div'}>
-                <Stack direction={'column'} gap={2}>
-                  <Button variant="contained" color="primary" size="small">
-                    Deselect
-                  </Button>
-                </Stack>
-              </Box>
-            </Stack>
+            <Top
+              requestItem={requestItem}
+              requestId={requestId}
+              donorId={requestItem?.donor}
+            />
+            <Typography variant="h3" component="h2" sx={{ mb: 1 }}>
+              Founded Donors ({visibleRows.length})
+            </Typography>
             <Grid container gap={2}>
               <DataGrid
                 rows={visibleRows}
                 columns={columns({
-                  assignDonor: (user: string) => {
-                    assignDonor({ data: { donor: user }, id: requestId });
+                  assignDonor: (userId: string) => {
+                    assignDonor({ data: { donor: userId }, id: requestId });
                   }
                 })}
                 disableColumnMenu
                 rowSelection={false}
-                pageSizeOptions={[5, 10, 25, 50, 100]}
+                pageSizeOptions={[5]}
                 initialState={{
                   pagination: {
-                    paginationModel: { pageSize: 10, page: 0 }
+                    paginationModel: { pageSize: 5, page: 0 }
                   }
                 }}
               />
@@ -125,32 +135,6 @@ interface VisibleDataTypes {
   sr: number | string | any;
   phoneNo: string;
   fullName: string;
-}
-interface USER_DATA_SERVER {
-  id: string;
-  username: string;
-  email: string;
-  createdAt: string;
-  isVerified: boolean;
-  Profile: {
-    firstName: string;
-    lastName: string;
-    displayName: string;
-    fatherName: string;
-    motherName: string;
-    address: string;
-    streetAddress: string;
-    upzila: string;
-    zila: string;
-    phoneNo: string;
-    lastDonation: string;
-    bloodGroup: string;
-    image: string;
-  };
-  role: {
-    name: string;
-    role: string;
-  };
 }
 
 const columns = (props: { assignDonor: any }): GridColDef[] => {

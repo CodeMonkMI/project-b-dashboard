@@ -24,7 +24,7 @@ const RequestTable = () => {
   const { data: requestData, isLoading, isError } = useGetAllRequestQuery();
   const [isHistoryOpen, setIsHistoryOpen] = useState<string | null>(null);
   const [isAssignedOpen, setIsAssignOpen] = useState<string | null>(
-    'c32cfae8-fe80-4a0b-8f22-9e28cb29cbe9'
+    '5b6a46fd-453d-4cbb-84ac-62b337a884b4'
   );
   const [makeProgressRequest] = useMakeProgressRequestMutation();
   const [holdStatusRequest] = useHoldStatusRequestMutation();
@@ -48,7 +48,8 @@ const RequestTable = () => {
             createdAt: cur.createdAt,
             phoneNo: cur.phone,
             status: cur.status,
-            date: cur.date
+            date: cur.date,
+            donorPhoneNo: cur.donor ? cur.donor?.Profile?.phoneNo || '-' : 'NA'
           });
         }
         return acc;
@@ -67,6 +68,16 @@ const RequestTable = () => {
     return data.blood;
   }, [isAssignedOpen, requestData]);
 
+  const requestItem: REQUEST_DATA_SERVER | undefined = useMemo(():
+    | REQUEST_DATA_SERVER
+    | undefined => {
+    if (!isAssignedOpen) return;
+    const data: REQUEST_DATA_SERVER | undefined = requestData?.data?.find(
+      (item: REQUEST_DATA_SERVER) => item.id === isAssignedOpen
+    );
+    return data;
+  }, [isAssignedOpen, requestData]);
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -83,6 +94,8 @@ const RequestTable = () => {
           }}
           blood={assignedBlood}
           requestId={isAssignedOpen}
+          requestItem={requestItem}
+          requestDate={requestItem?.date}
         />
         <DataGrid
           rows={visibleRows}
@@ -170,6 +183,11 @@ const columns = (props: {
           </div>
         );
       }
+    },
+    {
+      field: 'donorPhoneNo',
+      headerName: 'Donor Phone No',
+      width: 150
     },
     {
       field: 'date',
@@ -277,9 +295,10 @@ interface VisibleDataTypes {
   phoneNo: string;
   email: string;
   createdAt: string;
+  donorPhoneNo: string;
 }
 
-interface REQUEST_DATA_SERVER {
+export interface REQUEST_DATA_SERVER {
   address: string;
   blood: string;
   createdAt: string;
@@ -296,6 +315,14 @@ interface REQUEST_DATA_SERVER {
     Profile: {
       firstName: string;
       lastName: string;
+    };
+  };
+  donor: {
+    id: string;
+    username: string;
+    email: string;
+    Profile: {
+      phoneNo: string | null;
     };
   };
 }
