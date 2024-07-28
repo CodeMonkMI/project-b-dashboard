@@ -129,7 +129,7 @@ export const requestApi = apiSlice.injectEndpoints({
         method: 'put'
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        const updateRequest = dispatch(
+        const updateAllRequest = dispatch(
           requestApi.util.updateQueryData(
             'getAllRequest',
             undefined,
@@ -142,10 +142,21 @@ export const requestApi = apiSlice.injectEndpoints({
             }
           )
         );
+        const updateSingleRequest = dispatch(
+          requestApi.util.updateQueryData(
+            'getRequest',
+            arg,
+            (draftUser: any) => {
+              draftUser.data.status = 'progress';
+              draftUser.data.donor = null;
+            }
+          )
+        );
         try {
           await queryFulfilled;
         } catch (err) {
-          updateRequest.undo();
+          updateAllRequest.undo();
+          updateSingleRequest.undo();
         }
       }
     }),
@@ -164,12 +175,21 @@ export const requestApi = apiSlice.injectEndpoints({
               'getAllRequest',
               undefined,
               (draftUser: any) => {
-                console.log(arg);
                 const findRequest = draftUser.data.find(
                   (item) => item.id === arg.id
                 );
                 findRequest.status = 'ready';
                 findRequest.donor = data.data;
+              }
+            )
+          );
+          dispatch(
+            requestApi.util.updateQueryData(
+              'getRequest',
+              arg.id,
+              (draftUser: any) => {
+                draftUser.data.status = 'ready';
+                draftUser.data.donor = data.data;
               }
             )
           );
@@ -256,32 +276,3 @@ export const {
   useAssignDonorRequestMutation,
   useFindDonorMutation
 } = requestApi;
-
-interface SingleUser {
-  data?: {
-    id: string;
-    username: string;
-    email: string;
-    createdAt: string;
-
-    Profile: {
-      firstName: string;
-      lastName: string;
-      displayName: string;
-      fatherName: string;
-      motherName: string;
-      address: string;
-      streetAddress: string;
-      upzila: string;
-      zila: string;
-      phoneNo: string;
-      lastDonation: string;
-      bloodGroup: string;
-      image: string;
-    };
-    role: {
-      name: string;
-      role: string;
-    };
-  };
-}

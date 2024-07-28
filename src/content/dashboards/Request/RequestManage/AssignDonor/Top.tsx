@@ -1,12 +1,9 @@
-import CheckIcon from '@mui/icons-material/Delete';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography } from '@mui/material';
 import React, { useEffect, useMemo } from 'react';
 import { useGetRequestQuery } from 'src/redux/features/request/requestApiSlice';
-import { useGetUserQuery } from 'src/redux/features/user/userApiSlice';
 import { REQUEST_DATA_SERVER } from '../RequestTable';
-const Top: React.FC<{ requestId: any; donorId?: any; requestItem: any }> = (
-  props
-) => {
+import SelectedDonor from './SelectedDonor';
+const Top: React.FC<{ requestId: any }> = (props) => {
   const { requestId } = props;
   const { data: requestData, isSuccess: isRequestSuccess } =
     useGetRequestQuery(requestId);
@@ -22,19 +19,6 @@ const Top: React.FC<{ requestId: any; donorId?: any; requestItem: any }> = (
     if (!isRequestSuccess) return;
     return requestData.data;
   }, [isRequestSuccess, requestData]);
-
-  const { data: userData, isSuccess: isUserSuccess } = useGetUserQuery(
-    isRequestSuccess ? mainRequestData?.donor?.username : requestId,
-    {
-      skip: !isRequestSuccess
-    }
-  );
-  const mainUserData: USER_DATA_SERVER | undefined = useMemo(():
-    | USER_DATA_SERVER
-    | undefined => {
-    if (!isRequestSuccess) return;
-    return userData.data;
-  }, [isUserSuccess, userData]);
 
   return (
     <div>
@@ -71,39 +55,11 @@ const Top: React.FC<{ requestId: any; donorId?: any; requestItem: any }> = (
           </Stack>
         </Box>
         <Box>
-          {isUserSuccess && (
-            <>
-              <Typography variant="h3" component="h2">
-                Selected Donor
-              </Typography>
-              <Stack direction={'column'} sx={{ mt: 1 }} gap={1}>
-                <Typography sx={{ mt: 1 }} variant="h5" component={'h4'}>
-                  Blood:{' '}
-                  <Box component={'span'} sx={{ color: 'red' }}>
-                    {mainUserData?.Profile.bloodGroup}
-                  </Box>
-                </Typography>
-                <Typography variant="h5" component={'h4'}>
-                  Name: {mainUserData?.Profile.firstName} $
-                  {mainUserData?.Profile.lastName}
-                </Typography>
-                <Typography variant="h5" component={'h4'}>
-                  Address: {mainUserData?.Profile.address}
-                </Typography>
-                <Typography variant="h5" component={'h4'}>
-                  Phone Number: {mainUserData?.Profile.phoneNo}
-                </Typography>
-              </Stack>
-              <Button
-                variant="contained"
-                size="small"
-                aria-label="edit"
-                color="error"
-                sx={{ mt: 2 }}
-              >
-                <CheckIcon />
-              </Button>
-            </>
+          {mainRequestData?.donor && (
+            <SelectedDonor
+              donorUsername={mainRequestData.donor.username}
+              requestId={requestId}
+            />
           )}
         </Box>
       </Stack>
@@ -112,30 +68,3 @@ const Top: React.FC<{ requestId: any; donorId?: any; requestItem: any }> = (
 };
 
 export default Top;
-
-interface USER_DATA_SERVER {
-  id: string;
-  username: string;
-  email: string;
-  createdAt: string;
-
-  Profile: {
-    firstName: string;
-    lastName: string;
-    displayName: string;
-    fatherName: string;
-    motherName: string;
-    address: string;
-    streetAddress: string;
-    upzila: string;
-    zila: string;
-    phoneNo: string;
-    lastDonation: string;
-    bloodGroup: string;
-    image: string;
-  };
-  role: {
-    name: string;
-    role: string;
-  };
-}

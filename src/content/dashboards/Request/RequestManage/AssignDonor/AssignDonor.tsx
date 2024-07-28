@@ -98,11 +98,7 @@ const AssignDonor: React.FC<AssignDonorTypes> = (props) => {
       >
         <Box sx={{ ...style, width: 780 }}>
           <Box sx={{ position: 'relative' }}>
-            <Top
-              requestItem={requestItem}
-              requestId={requestId}
-              donorId={requestItem?.donor}
-            />
+            <Top requestId={requestId} />
             <Typography variant="h3" component="h2" sx={{ mb: 1 }}>
               Founded Donors ({visibleRows.length})
             </Typography>
