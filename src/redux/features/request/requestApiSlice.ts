@@ -222,6 +222,41 @@ export const requestApi = apiSlice.injectEndpoints({
         }
       }
     }),
+    completeRequest: builder.mutation({
+      query: (id) => ({
+        url: `donation/requested/complete/${id}`,
+        method: 'put'
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const updateAllRequest = dispatch(
+          requestApi.util.updateQueryData(
+            'getAllRequest',
+            undefined,
+            (draftUser: any) => {
+              const findRequest = draftUser.data.find(
+                (item) => item.id === arg
+              );
+              findRequest.status = 'completed';
+            }
+          )
+        );
+        const updateSingleRequest = dispatch(
+          requestApi.util.updateQueryData(
+            'getRequest',
+            arg.id,
+            (draftUser: any) => {
+              draftUser.data.status = 'completed';
+            }
+          )
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          updateAllRequest.undo();
+          updateSingleRequest.undo();
+        }
+      }
+    }),
     updateRequest: builder.mutation({
       query: (username) => ({
         url: `/user/promote`,
@@ -274,5 +309,6 @@ export const {
   useDeclineRequestMutation,
   useMakeProgressRequestMutation,
   useAssignDonorRequestMutation,
-  useFindDonorMutation
+  useFindDonorMutation,
+  useCompleteRequestMutation
 } = requestApi;

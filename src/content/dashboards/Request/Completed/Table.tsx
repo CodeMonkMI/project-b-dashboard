@@ -6,12 +6,16 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
-import { useGetAllRequestQuery } from 'src/redux/features/request/requestApiSlice';
+import {
+  useGetAllRequestQuery,
+  useMakeProgressRequestMutation
+} from 'src/redux/features/request/requestApiSlice';
 import { requestTableDateFormatter } from 'src/utils/dateFormatrer';
 import SingleHistory from './SingleHistory';
 
 const RequestTable = () => {
   const { data: requestData, isLoading, isError } = useGetAllRequestQuery();
+  const [makeProgressRequest] = useMakeProgressRequestMutation();
 
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
     if (isLoading || isError) return [];
@@ -26,13 +30,11 @@ const RequestTable = () => {
           phone: a.phone,
           completed: a.updatedAt,
           email: a.email,
-          donor: 'None'
+          donor: JSON.stringify(a.donor.email)
         };
       });
   }, [requestData]);
 
-  const approveRequest = (id: string) => {};
-  const declineRequest = (id: string) => {};
   const [isHistoryOpen, setIsHistoryOpen] = useState<string | null>(null);
 
   const historyOpen = (id: string) => {
@@ -50,7 +52,7 @@ const RequestTable = () => {
       <Paper sx={{ width: '100%', mb: 2 }}>
         <DataGrid
           rows={visibleRows}
-          columns={columns({ historyOpen })}
+          columns={columns({ historyOpen, makeProgressRequest })}
           disableColumnMenu
           rowSelection={false}
           pageSizeOptions={[5, 10, 25, 50, 100]}
@@ -67,8 +69,9 @@ const RequestTable = () => {
 
 const columns = (props: {
   historyOpen: (id: string) => void;
+  makeProgressRequest: any;
 }): GridColDef[] => {
-  const { historyOpen } = props;
+  const { historyOpen, makeProgressRequest } = props;
   return [
     {
       field: 'sr',
@@ -130,13 +133,15 @@ const columns = (props: {
             <IconButton
               aria-label="edit"
               color="info"
-              onClick={() => {
-                historyOpen(params.row.id);
-              }}
+              onClick={() => historyOpen(params.row.id)}
             >
               <HistoryIcon />
             </IconButton>
-            <IconButton aria-label="edit" color="error">
+            <IconButton
+              aria-label="edit"
+              color="error"
+              onClick={() => makeProgressRequest(params.row.id)}
+            >
               <ArrowBackIcon />
             </IconButton>
           </Stack>
@@ -177,6 +182,14 @@ interface REQUEST_DATA_SERVER {
     Profile: {
       firstName: string;
       lastName: string;
+    };
+  };
+  donor: {
+    id: string;
+    username: string;
+    email: string;
+    Profile: {
+      phoneNo: string | null;
     };
   };
 }

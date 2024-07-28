@@ -12,6 +12,7 @@ import Stack from '@mui/material/Stack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
 import {
+  useCompleteRequestMutation,
   useDeclineRequestMutation,
   useGetAllRequestQuery,
   useHoldStatusRequestMutation,
@@ -27,6 +28,7 @@ const RequestTable = () => {
   const [makeProgressRequest] = useMakeProgressRequestMutation();
   const [holdStatusRequest] = useHoldStatusRequestMutation();
   const [declineRequest] = useDeclineRequestMutation();
+  const [completeRequest] = useCompleteRequestMutation();
 
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
     if (isLoading || isError) return [];
@@ -102,7 +104,8 @@ const RequestTable = () => {
             makeProgressRequest,
             requestHold: holdStatusRequest,
             assignedOpen: setIsAssignOpen,
-            declineRequest
+            declineRequest,
+            completeRequest
           })}
           disableColumnMenu
           rowSelection={false}
@@ -124,13 +127,15 @@ const columns = (props: {
   makeProgressRequest: any;
   assignedOpen: any;
   declineRequest: any;
+  completeRequest: any;
 }): GridColDef[] => {
   const {
     historyOpen,
     makeProgressRequest,
     requestHold,
     assignedOpen,
-    declineRequest
+    declineRequest,
+    completeRequest
   } = props;
   return [
     {
@@ -271,6 +276,7 @@ const columns = (props: {
               disabled={params.row.status !== 'ready'}
               aria-label="edit"
               color="success"
+              onClick={() => completeRequest(params.row.id)}
             >
               <CheckIcon />
             </IconButton>
