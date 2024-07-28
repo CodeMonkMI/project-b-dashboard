@@ -13,10 +13,10 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
 import {
   useCompleteRequestMutation,
-  useDeclineRequestMutation,
   useGetAllRequestQuery,
   useHoldStatusRequestMutation,
-  useMakeProgressRequestMutation
+  useMakeProgressRequestMutation,
+  useRemoveRequestMutation
 } from 'src/redux/features/request/requestApiSlice';
 import { requestTableDateFormatter } from 'src/utils/dateFormatrer';
 import AssignDonor from './AssignDonor';
@@ -27,7 +27,7 @@ const RequestTable = () => {
   const [isAssignedOpen, setIsAssignOpen] = useState<string | null>(null);
   const [makeProgressRequest] = useMakeProgressRequestMutation();
   const [holdStatusRequest] = useHoldStatusRequestMutation();
-  const [declineRequest] = useDeclineRequestMutation();
+  const [deleteRequest] = useRemoveRequestMutation();
   const [completeRequest] = useCompleteRequestMutation();
 
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
@@ -104,8 +104,8 @@ const RequestTable = () => {
             makeProgressRequest,
             requestHold: holdStatusRequest,
             assignedOpen: setIsAssignOpen,
-            declineRequest,
-            completeRequest
+            completeRequest,
+            deleteRequest
           })}
           disableColumnMenu
           rowSelection={false}
@@ -126,16 +126,16 @@ const columns = (props: {
   requestHold: any;
   makeProgressRequest: any;
   assignedOpen: any;
-  declineRequest: any;
   completeRequest: any;
+  deleteRequest: any;
 }): GridColDef[] => {
   const {
     historyOpen,
     makeProgressRequest,
     requestHold,
     assignedOpen,
-    declineRequest,
-    completeRequest
+    completeRequest,
+    deleteRequest
   } = props;
   return [
     {
@@ -267,7 +267,7 @@ const columns = (props: {
             <IconButton
               aria-label="edit"
               color="error"
-              onClick={() => declineRequest(params.row.id)}
+              onClick={() => deleteRequest(params.row.id)}
             >
               <DeleteIcon />
             </IconButton>
