@@ -1,5 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useGetRequestQuery } from 'src/redux/features/request/requestApiSlice';
 import { REQUEST_DATA_SERVER } from '../RequestTable';
 import SelectedDonor from './SelectedDonor';
@@ -7,11 +7,6 @@ const Top: React.FC<{ requestId: any }> = (props) => {
   const { requestId } = props;
   const { data: requestData, isSuccess: isRequestSuccess } =
     useGetRequestQuery(requestId);
-  useEffect(() => {
-    if (isRequestSuccess) {
-      console.log(requestData);
-    }
-  }, [isRequestSuccess]);
 
   const mainRequestData: REQUEST_DATA_SERVER | undefined = useMemo(():
     | REQUEST_DATA_SERVER

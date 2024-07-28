@@ -23,9 +23,7 @@ import SingleHistory from './SingleHistory';
 const RequestTable = () => {
   const { data: requestData, isLoading, isError } = useGetAllRequestQuery();
   const [isHistoryOpen, setIsHistoryOpen] = useState<string | null>(null);
-  const [isAssignedOpen, setIsAssignOpen] = useState<string | null>(
-    '5b6a46fd-453d-4cbb-84ac-62b337a884b4'
-  );
+  const [isAssignedOpen, setIsAssignOpen] = useState<string | null>(null);
   const [makeProgressRequest] = useMakeProgressRequestMutation();
   const [holdStatusRequest] = useHoldStatusRequestMutation();
   const [declineRequest] = useDeclineRequestMutation();
