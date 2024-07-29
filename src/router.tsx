@@ -32,13 +32,15 @@ const AddUser = Loader(lazy(() => import('src/content/dashboards/AddUser')));
 const RequestManage = Loader(
   lazy(() => import('src/content/dashboards/Request/RequestManage'))
 );
+const RequestActivity = Loader(
+  lazy(() => import('src/content/dashboards/Request/Activity'))
+);
 const RequestCompleted = Loader(
   lazy(() => import('src/content/dashboards/Request/Completed'))
 );
 const RequestPending = Loader(
   lazy(() => import('src/content/dashboards/Request/Pending'))
 );
-const History = Loader(lazy(() => import('src/content/dashboards/History')));
 const MakeRequest = Loader(
   lazy(() => import('src/content/dashboards/Request/Make'))
 );
@@ -46,6 +48,7 @@ const DonorFinder = Loader(
   lazy(() => import('src/content/dashboards/Donor/Finder'))
 );
 
+const History = Loader(lazy(() => import('src/content/dashboards/History')));
 // Applications
 const Messenger = Loader(
   lazy(() => import('src/content/applications/Messenger'))
@@ -188,8 +191,8 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
             element: <RequestPending />
           },
           {
-            path: 'add',
-            element: <AddUser />
+            path: 'activity',
+            element: <RequestActivity />
           },
           {
             path: 'view',

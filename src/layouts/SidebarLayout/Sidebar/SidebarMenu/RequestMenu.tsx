@@ -57,6 +57,17 @@ const RequestMenu = () => {
                 Completed
               </Button>
             </ListItem>
+            <ListItem component="div">
+              <Button
+                disableRipple
+                component={RouterLink}
+                onClick={closeSidebar}
+                to="/dashboards/request/activity"
+                startIcon={<TableChartTwoToneIcon />}
+              >
+                Activity
+              </Button>
+            </ListItem>
           </List>
         </SubMenuWrapper>
       </List>

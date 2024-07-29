@@ -21,6 +21,17 @@ export const requestApi = apiSlice.injectEndpoints({
         }
       })
     }),
+    getAllActivity: builder.query<any, void>({
+      query: () => ({
+        url: `/donation/activity`,
+        method: 'get',
+        transformResponse: (rawResult: any) => {
+          console.log({ rawResult });
+          return rawResult.data.data;
+        }
+      }),
+      providesTags: ['getAllActivity']
+    }),
     addRequest: builder.mutation({
       query: (data) => ({
         url: '/donation/requested',
@@ -50,6 +61,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `/donation/requested/${id}`,
         method: 'DELETE'
       }),
+      invalidatesTags: ['getAllActivity'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -78,6 +90,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `donation/requested/approve/${id}`,
         method: 'put'
       }),
+      invalidatesTags: ['getAllActivity'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -103,6 +116,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `donation/requested/decline/${id}`,
         method: 'put'
       }),
+      invalidatesTags: ['getAllActivity'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -128,6 +142,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `donation/requested/progress/${id}`,
         method: 'put'
       }),
+      invalidatesTags: ['getAllActivity'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateAllRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -201,6 +216,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `donation/requested/hold/${id}`,
         method: 'put'
       }),
+      invalidatesTags: ['getAllActivity'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -227,6 +243,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `donation/requested/complete/${id}`,
         method: 'put'
       }),
+      invalidatesTags: ['getAllActivity'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateAllRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -263,6 +280,7 @@ export const requestApi = apiSlice.injectEndpoints({
         method: 'Post',
         body: { username }
       }),
+      invalidatesTags: ['getAllActivity'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateUser = dispatch(
           requestApi.util.updateQueryData(
@@ -310,5 +328,6 @@ export const {
   useMakeProgressRequestMutation,
   useAssignDonorRequestMutation,
   useFindDonorMutation,
-  useCompleteRequestMutation
+  useCompleteRequestMutation,
+  useGetAllActivityQuery
 } = requestApi;
