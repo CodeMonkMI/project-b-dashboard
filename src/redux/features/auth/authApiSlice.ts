@@ -32,7 +32,7 @@ export const authApi = apiSlice.injectEndpoints({
         }
       }
     }),
-    getMe: builder.query({
+    getMe: builder.query<any, void>({
       query: () => ({
         url: '/auth/me',
         method: 'post'

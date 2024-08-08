@@ -3,15 +3,17 @@ import Footer from 'src/components/Footer';
 
 import { Container, Grid } from '@mui/material';
 
-import { useParams } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import { useGetUserQuery } from 'src/redux/features/user/userApiSlice';
 import Addresses from './Addresses';
 import Contribution from './Contribution';
 import ProfileCover from './ProfileCover';
 
 function ViewProfile() {
-  const { id } = useParams<{ id: string }>();
-
+  const { pathname } = useLocation();
+  console.log(pathname);
+  let { id } = useParams<{ id: string }>();
+  const isAuthProfile = pathname === '/management/profile';
   const { data, isLoading } = useGetUserQuery(id);
 
   if (isLoading) return <h3>Loading....</h3>;

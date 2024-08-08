@@ -15,9 +15,9 @@ import {
 import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
 import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
-import InboxTwoToneIcon from '@mui/icons-material/InboxTwoTone';
 import SignOut from './SignOut';
 
+import { useGetMeQuery } from 'src/redux/features/auth/authApiSlice';
 import {
   MenuUserBox,
   UserBoxButton,
@@ -27,6 +27,7 @@ import {
 } from './styled';
 
 function HeaderUserbox() {
+  const { data, isLoading, isSuccess } = useGetMeQuery();
   const user = {
     name: 'Catherine Pike',
     avatar: '/static/images/avatars/1.jpg',
@@ -44,15 +45,19 @@ function HeaderUserbox() {
     setOpen(false);
   };
 
+  if (isLoading) return <h2>Loading...</h2>;
+
   return (
     <>
       <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
         <Avatar variant="rounded" alt={user.name} src={user.avatar} />
         <Hidden mdDown>
           <UserBoxText>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
+            <UserBoxLabel variant="body1">
+              {data.data.Profile.firstName} {data.data.Profile.lastName}
+            </UserBoxLabel>
             <UserBoxDescription variant="body2">
-              {user.jobtitle}
+              {data.data.role.name}
             </UserBoxDescription>
           </UserBoxText>
         </Hidden>
@@ -74,28 +79,41 @@ function HeaderUserbox() {
         }}
       >
         <MenuUserBox sx={{ minWidth: 210 }} display="flex">
-          <Avatar variant="rounded" alt={user.name} src={user.avatar} />
+          <Avatar
+            variant="rounded"
+            alt={`${data.data.Profile.firstName} ${data.data.Profile.lastName}`}
+            src={user.avatar}
+          />
           <UserBoxText>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
+            <UserBoxLabel variant="body1">
+              {data.data.Profile.firstName} {data.data.Profile.lastName}
+            </UserBoxLabel>
             <UserBoxDescription variant="body2">
-              {user.jobtitle}
+              {data.data.role.name}
             </UserBoxDescription>
           </UserBoxText>
         </MenuUserBox>
         <Divider sx={{ mb: 0 }} />
         <List sx={{ p: 1 }} component="nav">
-          <ListItem button to="/management/profile/details" component={NavLink}>
+          <ListItem
+            button
+            to={`/management/profile/${data.data.username}`}
+            component={NavLink}
+            onClick={() => {
+              setOpen(false);
+            }}
+          >
             <AccountBoxTwoToneIcon fontSize="small" />
             <ListItemText primary="My Profile" />
           </ListItem>
-          <ListItem button to="/dashboards/messenger" component={NavLink}>
-            <InboxTwoToneIcon fontSize="small" />
-            <ListItemText primary="Messenger" />
-          </ListItem>
+
           <ListItem
             button
             to="/management/profile/settings"
             component={NavLink}
+            onClick={() => {
+              setOpen(false);
+            }}
           >
             <AccountTreeTwoToneIcon fontSize="small" />
             <ListItemText primary="Account Settings" />

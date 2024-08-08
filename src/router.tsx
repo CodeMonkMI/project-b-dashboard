@@ -212,34 +212,34 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
         element: <Messenger />
       }
     ]
+  },
+  {
+    path: 'management',
+    element: <SidebarLayout />,
+    children: [
+      {
+        path: '',
+        element: <Navigate to="transactions" replace />
+      },
+      {
+        path: 'transactions',
+        element: <Transactions />
+      },
+      {
+        path: 'profile',
+        children: [
+          {
+            path: ':id',
+            element: <ViewProfile />
+          },
+          {
+            path: 'settings',
+            element: <UserSettings />
+          }
+        ]
+      }
+    ]
   }
-  // {
-  //   path: 'management',
-  //   element: <SidebarLayout />,
-  //   children: [
-  //     {
-  //       path: '',
-  //       element: <Navigate to="transactions" replace />
-  //     },
-  //     {
-  //       path: 'transactions',
-  //       element: <Transactions />
-  //     },
-  //     {
-  //       path: 'profile',
-  //       children: [
-  //         {
-  //           path: '',
-  //           element: <Navigate to="details" replace />
-  //         },
-  //         {
-  //           path: 'settings',
-  //           element: <UserSettings />
-  //         }
-  //       ]
-  //     }
-  //   ]
-  // }
 ];
 
 export default routes;
