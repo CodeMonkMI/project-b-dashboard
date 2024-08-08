@@ -1,3 +1,4 @@
+import NotificationsActiveTwoToneIcon from '@mui/icons-material/NotificationsActiveTwoTone';
 import {
   alpha,
   Badge,
@@ -10,11 +11,11 @@ import {
   Tooltip,
   Typography
 } from '@mui/material';
-import { useRef, useState } from 'react';
-import NotificationsActiveTwoToneIcon from '@mui/icons-material/NotificationsActiveTwoTone';
 import { styled } from '@mui/material/styles';
+import { useRef, useState } from 'react';
 
-import { formatDistance, subDays } from 'date-fns';
+import { formatDistance } from 'date-fns';
+import { useGetNotificationsQuery } from 'src/redux/features/notification/notificationApiSlice';
 
 const NotificationsBadge = styled(Badge)(
   ({ theme }) => `
@@ -52,12 +53,14 @@ function HeaderNotifications() {
     setOpen(false);
   };
 
+  const { data, isSuccess } = useGetNotificationsQuery();
+
   return (
     <>
       <Tooltip arrow title="Notifications">
         <IconButton color="primary" ref={ref} onClick={handleOpen}>
           <NotificationsBadge
-            badgeContent={1}
+            badgeContent={isSuccess ? data.data.length : 0}
             anchorOrigin={{
               vertical: 'top',
               horizontal: 'right'
@@ -90,34 +93,53 @@ function HeaderNotifications() {
         </Box>
         <Divider />
         <List sx={{ p: 0 }}>
-          <ListItem
-            sx={{ p: 2, minWidth: 350, display: { xs: 'block', sm: 'flex' } }}
-          >
-            <Box flex="1">
-              <Box display="flex" justifyContent="space-between">
-                <Typography sx={{ fontWeight: 'bold' }}>
-                  Messaging Platform
-                </Typography>
-                <Typography variant="caption" sx={{ textTransform: 'none' }}>
-                  {formatDistance(subDays(new Date(), 3), new Date(), {
-                    addSuffix: true
-                  })}
-                </Typography>
-              </Box>
-              <Typography
-                component="span"
-                variant="body2"
-                color="text.secondary"
-              >
-                {' '}
-                new messages in your inbox
-              </Typography>
-            </Box>
-          </ListItem>
+          {isSuccess &&
+            data.data.map((item: NotificationsTypes) => {
+              return (
+                <>
+                  <Item
+                    key={item.id}
+                    id={item.id}
+                    message={item.message}
+                    createdAt={item.createdAt}
+                  />
+                  <Divider />
+                </>
+              );
+            })}
         </List>
       </Popover>
     </>
   );
 }
 
+const Item: React.FC<NotificationsTypes> = (props) => {
+  const { createdAt, id, message } = props;
+  return (
+    <ListItem sx={{ p: 2, width: 350, display: { xs: 'block', sm: 'flex' } }}>
+      <Box flex="1">
+        <Box display="flex" justifyContent="space-between">
+          <Typography sx={{ fontWeight: 'bold' }}>
+            You have got a message
+          </Typography>
+          <Typography variant="caption" sx={{ textTransform: 'none' }}>
+            {formatDistance(new Date(createdAt), new Date(), {
+              addSuffix: true
+            })}
+          </Typography>
+        </Box>
+        <Typography component="span" variant="body2" color="text.secondary">
+          {message}
+        </Typography>
+      </Box>
+    </ListItem>
+  );
+};
+
 export default HeaderNotifications;
+
+export interface NotificationsTypes {
+  createdAt: string;
+  id: string;
+  message: string;
+}

@@ -1,6 +1,6 @@
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
 import DisplaySettingsTwoToneIcon from '@mui/icons-material/DisplaySettingsTwoTone';
-import { Button, List, ListItem, ListSubheader } from '@mui/material';
+import { Box, Button, List, ListItem, ListSubheader } from '@mui/material';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
@@ -23,7 +23,7 @@ const ManagementMenu = () => {
         <SubMenuWrapper>
           <List component="div">
             {me?.role?.role === 'super_admin' && (
-              <>
+              <Box sx={{ display: 'none' }}>
                 <ListItem component="div">
                   <Button
                     disableRipple
@@ -46,7 +46,7 @@ const ManagementMenu = () => {
                     Growth
                   </Button>
                 </ListItem>
-              </>
+              </Box>
             )}
             <ListItem component="div">
               <Button

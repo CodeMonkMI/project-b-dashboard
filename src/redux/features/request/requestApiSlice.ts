@@ -37,7 +37,8 @@ export const requestApi = apiSlice.injectEndpoints({
         url: '/donation/requested',
         method: 'POST',
         body: data
-      })
+      }),
+      invalidatesTags: ['notifications']
       // async onQueryStarted(arg, { queryFulfilled, dispatch }) {
       //   try {
       //     const result = await queryFulfilled;
@@ -61,7 +62,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `/donation/requested/${id}`,
         method: 'DELETE'
       }),
-      invalidatesTags: ['getAllActivity'],
+      invalidatesTags: ['getAllActivity', 'notifications'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -90,7 +91,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `donation/requested/approve/${id}`,
         method: 'put'
       }),
-      invalidatesTags: ['getAllActivity'],
+      invalidatesTags: ['getAllActivity', 'notifications'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -116,7 +117,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `donation/requested/decline/${id}`,
         method: 'put'
       }),
-      invalidatesTags: ['getAllActivity'],
+      invalidatesTags: ['getAllActivity', 'notifications'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -142,7 +143,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `donation/requested/progress/${id}`,
         method: 'put'
       }),
-      invalidatesTags: ['getAllActivity'],
+      invalidatesTags: ['getAllActivity', 'notifications'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateAllRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -181,6 +182,7 @@ export const requestApi = apiSlice.injectEndpoints({
         method: 'put',
         body: data
       }),
+      invalidatesTags: ['getAllActivity', 'notifications'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const { data } = await queryFulfilled;
@@ -216,7 +218,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `donation/requested/hold/${id}`,
         method: 'put'
       }),
-      invalidatesTags: ['getAllActivity'],
+      invalidatesTags: ['getAllActivity', 'notifications'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -243,7 +245,7 @@ export const requestApi = apiSlice.injectEndpoints({
         url: `donation/requested/complete/${id}`,
         method: 'put'
       }),
-      invalidatesTags: ['getAllActivity'],
+      invalidatesTags: ['getAllActivity', 'notifications'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateAllRequest = dispatch(
           requestApi.util.updateQueryData(
@@ -280,7 +282,7 @@ export const requestApi = apiSlice.injectEndpoints({
         method: 'Post',
         body: { username }
       }),
-      invalidatesTags: ['getAllActivity'],
+      invalidatesTags: ['getAllActivity', 'notifications'],
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         const updateUser = dispatch(
           requestApi.util.updateQueryData(
