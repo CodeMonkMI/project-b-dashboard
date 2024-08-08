@@ -99,14 +99,6 @@ const ProfileCover: React.FC<{
                 .replaceAll('_POSITIVE', '+')
                 .replaceAll('_NEGATIVE', '-') || 'Unknown'}
             </Button>
-            <Button
-              size="small"
-              sx={{ mx: 1 }}
-              variant="outlined"
-              title="Is this user donated today? Click here to update last donation status"
-            >
-              Donated Today?
-            </Button>
           </Box>
         </Box>
       </Box>

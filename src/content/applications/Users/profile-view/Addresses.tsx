@@ -9,8 +9,15 @@ import {
 } from '@mui/material';
 
 import { ArrowForwardTwoTone } from '@mui/icons-material';
+import { useParams } from 'react-router';
+import { useGetUserQuery } from 'src/redux/features/user/userApiSlice';
 
 function Addresses() {
+  const { id } = useParams<{ id: string }>();
+
+  const { data, isLoading, isSuccess, isError, error } = useGetUserQuery(id);
+  if (isLoading) return <h3>Loading....</h3>;
+  const profile = data.data?.Profile;
   return (
     <Grid
       container
@@ -28,31 +35,20 @@ function Addresses() {
               Present
             </Typography>
             <Box sx={{ minHeight: { xs: 0 } }} p={2}>
-              <Typography variant="h5">Kadin Westervelt</Typography>
+              <Typography variant="h5">{profile.address || '-'}</Typography>
               <Typography variant="h5" sx={{ py: 1 }} fontWeight="normal">
-                714-650-6297
+                {profile.streetAddress || '-'}
               </Typography>
               <Typography variant="subtitle1">
-                348 W. Goldfield Street Bethel Park, PA 15102
+                {profile.upzila || '-'} ,{profile.zila || '-'}
               </Typography>
             </Box>
           </Box>
           <Box p={2}>
-            <Typography variant="caption" fontWeight="bold">
-              Permanent
-            </Typography>
-            <Box sx={{ minHeight: { xs: 0, md: 4 } }} p={2}>
-              <Typography variant="h5">Kadin Westervelt</Typography>
-              <Typography variant="h5" sx={{ py: 1 }} fontWeight="normal">
-                714-650-6297
-              </Typography>
-              <Typography variant="subtitle1">
-                348 W. Goldfield Street Bethel Park, PA 15102
-              </Typography>
-            </Box>
             <Button
               fullWidth
-              variant="outlined"
+              disabled
+              variant="contained"
               endIcon={<ArrowForwardTwoTone />}
             >
               Manage

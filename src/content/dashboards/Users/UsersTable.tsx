@@ -18,7 +18,10 @@ import {
   usePromoteUserMutation,
   useRemoveUserMutation
 } from 'src/redux/features/user/userApiSlice';
-import { userTableDateFormatter } from 'src/utils/dateFormatrer';
+import {
+  activityTableDateFormatter,
+  userTableDateFormatter
+} from 'src/utils/dateFormatrer';
 
 interface USER_DATA_SERVER {
   id: string;
@@ -68,7 +71,7 @@ export default function EnhancedTable() {
               createdAt: a.createdAt,
               phoneNo: a.Profile.phoneNo,
               fullName: `${a.Profile.firstName} ${a.Profile.lastName}`,
-              lastDonation: a?.Profile?.lastDonation || '-'
+              lastDonation: a?.Profile?.lastDonation
             });
           }
           return acc;
@@ -151,7 +154,11 @@ const columns = ({
   {
     field: 'lastDonation',
     headerName: 'Last Donation',
-    width: 150
+    width: 200,
+    renderCell: (params) => {
+      if (!params.row.lastDonation) return '-';
+      return <div>{activityTableDateFormatter(params.row.lastDonation)}</div>;
+    }
   },
   {
     field: 'email',

@@ -1,5 +1,4 @@
 import HandshakeIcon from '@mui/icons-material/Handshake';
-import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import {
   Avatar,
   Box,
@@ -10,8 +9,11 @@ import {
   styled,
   useTheme
 } from '@mui/material';
+import { useParams } from 'react-router';
+import { useGetUserRequestContributionQuery } from 'src/redux/features/request/requestApiSlice';
+import LastDonation from './LastDonation';
 
-const AvatarPrimary = styled(Avatar)(
+export const AvatarPrimary = styled(Avatar)(
   ({ theme }) => `
       background: ${theme.colors.primary.lighter};
       color: ${theme.colors.primary.main};
@@ -20,33 +22,30 @@ const AvatarPrimary = styled(Avatar)(
 `
 );
 
-const Contribution: React.FC<{ lastDonation }> = (props) => {
+const Contribution = () => {
   const theme = useTheme();
-  const { lastDonation } = props;
+  const { id } = useParams<{ id: string }>();
+  const { data, isLoading, isSuccess, isError } =
+    useGetUserRequestContributionQuery(id);
+
+  interface StatsTypes {
+    donation: {
+      total: string | number;
+      month: string | number;
+    };
+    ref: {
+      total: string | number;
+      month: string | number;
+    };
+  }
+
+  if (isLoading) return <h3>Loading....</h3>;
+  const stats: StatsTypes = data.data;
   return (
     <Card>
       <CardHeader title="All Time Contribution" />
       <Divider />
-      <Box px={2} py={4} display="flex" alignItems="flex-start">
-        <AvatarPrimary>
-          <VolunteerActivismIcon />
-        </AvatarPrimary>
-        <Box pl={2} flex={1}>
-          <Typography variant="h3">Last Donation</Typography>
-
-          <Box pt={2} display="flex">
-            <Box pr={8}>
-              <Typography
-                gutterBottom
-                variant="caption"
-                sx={{ fontSize: `${theme.typography.pxToRem(16)}` }}
-              >
-                {lastDonation}
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+      <LastDonation />
       <Divider />
       <Box px={2} py={4} display="flex" alignItems="flex-start">
         <AvatarPrimary>
@@ -64,7 +63,7 @@ const Contribution: React.FC<{ lastDonation }> = (props) => {
               >
                 Total
               </Typography>
-              <Typography variant="h2">64</Typography>
+              <Typography variant="h2">{stats.donation.total}</Typography>
             </Box>
             <Box>
               <Typography
@@ -74,7 +73,7 @@ const Contribution: React.FC<{ lastDonation }> = (props) => {
               >
                 This Month
               </Typography>
-              <Typography variant="h2">15</Typography>
+              <Typography variant="h2">{stats.donation.month}</Typography>
             </Box>
           </Box>
         </Box>
@@ -96,7 +95,7 @@ const Contribution: React.FC<{ lastDonation }> = (props) => {
               >
                 Total
               </Typography>
-              <Typography variant="h2">64</Typography>
+              <Typography variant="h2">{stats.ref.total}</Typography>
             </Box>
             <Box>
               <Typography
@@ -106,7 +105,7 @@ const Contribution: React.FC<{ lastDonation }> = (props) => {
               >
                 This Month
               </Typography>
-              <Typography variant="h2">15</Typography>
+              <Typography variant="h2">{stats.ref.month}</Typography>
             </Box>
           </Box>
         </Box>

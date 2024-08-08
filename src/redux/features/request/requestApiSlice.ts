@@ -21,6 +21,12 @@ export const requestApi = apiSlice.injectEndpoints({
         }
       })
     }),
+    getUserRequestContribution: builder.query<any, string>({
+      query: (userId: string) => ({
+        url: `/donation/requested/contribution/${userId}`,
+        method: 'get'
+      })
+    }),
     getAllActivity: builder.query<any, void>({
       query: () => ({
         url: `/donation/activity`,
@@ -331,5 +337,6 @@ export const {
   useAssignDonorRequestMutation,
   useFindDonorMutation,
   useCompleteRequestMutation,
-  useGetAllActivityQuery
+  useGetAllActivityQuery,
+  useGetUserRequestContributionQuery
 } = requestApi;

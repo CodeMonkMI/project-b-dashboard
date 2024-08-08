@@ -6,6 +6,7 @@ import BaseLayout from 'src/layouts/BaseLayout';
 import SidebarLayout from 'src/layouts/SidebarLayout';
 
 import SuspenseLoader from 'src/components/SuspenseLoader';
+import AdminLayout from './layouts/AdminLayout';
 
 const Loader = (Component) => (props) =>
   (
@@ -139,6 +140,7 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
       },
       {
         path: 'users',
+        element: <AdminLayout />,
         children: [
           {
             path: 'all',

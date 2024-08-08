@@ -15,7 +15,7 @@ const SidebarLayout: FC<SidebarLayoutProps> = () => {
   const theme = useTheme();
   const { isAuthenticated, me } = useSelector((state: any) => state.auth);
 
-  useGetMeQuery(undefined, {
+  const { isLoading, isSuccess } = useGetMeQuery(undefined, {
     skip: !isAuthenticated
   });
 
@@ -66,7 +66,8 @@ const SidebarLayout: FC<SidebarLayoutProps> = () => {
           }}
         >
           <Box display="block">
-            <Outlet />
+            {isLoading && <h2>Loading...</h2>}
+            {isSuccess && <Outlet />}
           </Box>
         </Box>
       </Box>
