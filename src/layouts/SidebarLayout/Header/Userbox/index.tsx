@@ -50,7 +50,14 @@ function HeaderUserbox() {
   return (
     <>
       <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
-        <Avatar variant="rounded" alt={user.name} src={user.avatar} />
+        <Avatar
+          variant="rounded"
+          alt={`${data.data.Profile.firstName} ${data.data.Profile.lastName}`}
+          src={
+            data.data.Profile.image ||
+            `https://ui-avatars.com/api/?name=${`${data.data.Profile.firstName} ${data.data.Profile.lastName}`}&size=200`
+          }
+        />
         <Hidden mdDown>
           <UserBoxText>
             <UserBoxLabel variant="body1">
@@ -82,7 +89,10 @@ function HeaderUserbox() {
           <Avatar
             variant="rounded"
             alt={`${data.data.Profile.firstName} ${data.data.Profile.lastName}`}
-            src={user.avatar}
+            src={
+              data.data.Profile.image ||
+              `https://ui-avatars.com/api/?name=${`${data.data.Profile.firstName} ${data.data.Profile.lastName}`}&size=200`
+            }
           />
           <UserBoxText>
             <UserBoxLabel variant="body1">

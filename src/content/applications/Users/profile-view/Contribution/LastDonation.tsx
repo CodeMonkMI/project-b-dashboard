@@ -30,7 +30,9 @@ const LastDonation = () => {
                 variant="caption"
                 sx={{ fontSize: `${theme.typography.pxToRem(16)}` }}
               >
-                {activityTableDateFormatter(profile.lastDonation) || '-'}
+                {profile.lastDonation
+                  ? activityTableDateFormatter(profile.lastDonation)
+                  : '-'}
               </Typography>
             </Box>
           </Box>
