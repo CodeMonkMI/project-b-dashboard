@@ -112,11 +112,13 @@ function PersonalDetails() {
   const { data: me, isLoading, isSuccess } = useGetMeQuery();
   const [userData, setUserData] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors }
+    formState: { errors },
+    setError
   } = useForm();
   if (isLoading) return <div>Loading...</div>;
   useEffect(() => {
@@ -141,9 +143,7 @@ function PersonalDetails() {
     }
   }, [isSuccess, me]);
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-  };
+  const onSubmit = (data: FormData) => {};
 
   return (
     <Grid item xs={12}>
@@ -159,7 +159,7 @@ function PersonalDetails() {
               Personal Details
             </Typography>
             <Typography variant="subtitle2">
-              Manage informations related to your personal details
+              Manage information related to your personal details
             </Typography>
           </Box>
           <Button

@@ -52,6 +52,25 @@ export const authApi = apiSlice.injectEndpoints({
         method: 'put',
         body: data
       })
+    }),
+    updateInfo: builder.mutation({
+      query: (data) => ({
+        url: '/auth/update-info',
+        method: 'put',
+        body: data
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const updateRequest = dispatch(
+          authApi.util.updateQueryData('getMe', undefined, (draftUser: any) => {
+            draftUser.data.email = arg.email;
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          updateRequest.undo();
+        }
+      }
     })
   })
 });
@@ -60,5 +79,6 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useGetMeQuery,
-  useUpdatePasswordMutation
+  useUpdatePasswordMutation,
+  useUpdateInfoMutation
 } = authApi;

@@ -13,7 +13,10 @@ import {
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Text from 'src/components/Text';
-import { useGetMeQuery } from 'src/redux/features/auth/authApiSlice';
+import {
+  useGetMeQuery,
+  useUpdateInfoMutation
+} from 'src/redux/features/auth/authApiSlice';
 interface ValidationRule {
   required?: boolean | string; // true or custom message
   minLength?: { value: number; message: string };
@@ -36,7 +39,7 @@ const accountSettingsFields: {
     field: 'email',
     id: 'email',
     input: {
-      name: 'lastDonation',
+      name: 'email',
       validation: { required: 'This field is required' }
     }
   },
@@ -45,8 +48,9 @@ const accountSettingsFields: {
     field: 'username',
     id: 'username',
     input: {
-      name: 'lastDonation',
-      validation: { required: 'This field is required' }
+      disabled: true,
+      name: 'username',
+      validation: {}
     }
   },
   {
@@ -55,19 +59,14 @@ const accountSettingsFields: {
     id: 'role',
     input: {
       disabled: true,
-      name: 'lastDonation',
-      validation: { required: 'This field is required' }
+      name: 'role',
+      validation: {}
     }
   }
 ];
 
 type FormData = {
-  firstName: string;
-  lastName: string;
-  displayName: string;
-  bloodGroup: string;
-  address: string;
-  phoneNo: string; // Adjust type if necessary
+  email: string;
 };
 
 function AccountDetails() {
@@ -83,6 +82,7 @@ function AccountDetails() {
         role: me.data.role.name
       };
 
+      setValue('email', generatedData.email);
       setUserData(generatedData);
     }
   }, [isSuccess, me]);
@@ -92,11 +92,31 @@ function AccountDetails() {
     register,
     handleSubmit,
     setValue,
-    formState: { errors }
+    formState: { errors },
+    setError
   } = useForm();
   const onSubmit = (data: FormData) => {
     console.log(data);
+    updateInfo(data);
   };
+
+  const [updateInfo, { isError, error, isSuccess: isSuccessUpdate }] =
+    useUpdateInfoMutation();
+  useEffect(() => {
+    if (isSuccessUpdate) {
+      setIsOpen(false);
+    }
+  }, [isSuccessUpdate]);
+  useEffect(() => {
+    if (isError) {
+      if ('status' in error) {
+        const data: FormData | {} | undefined = error.data;
+        Object.entries(data).map((item: any) => {
+          setError(item[0], { message: item[1] });
+        });
+      }
+    }
+  }, [isError]);
 
   return (
     <Grid item xs={12} md={6}>
@@ -145,7 +165,7 @@ function AccountDetails() {
                       </Box>
                     </Grid>
                     <Grid item xs={12} sm={8} md={9}>
-                      {isOpen ? (
+                      {isOpen && !field.input.disabled ? (
                         <TextField
                           fullWidth
                           variant="standard"
