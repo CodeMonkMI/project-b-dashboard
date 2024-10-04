@@ -20,7 +20,7 @@ interface ValidationRule {
   minLength?: { value: number; message: string };
   maxLength?: { value: number; message: string };
   pattern?: { value: RegExp; message: string };
-  validate?: (value: string) => boolean | string; // custom validation function
+  validate?: (value: string, formValues: FormData) => boolean | string; // custom validation function
 }
 
 const updatePasswordFields: {
@@ -35,10 +35,10 @@ const updatePasswordFields: {
 }[] = [
   {
     name: 'Old Password',
-    field: 'oldPassword',
+    field: 'password',
     id: 'old_password',
     input: {
-      name: 'lastDonation',
+      name: 'password',
       validation: { required: 'This field is required' }
     }
   },
@@ -47,7 +47,7 @@ const updatePasswordFields: {
     field: 'newPassword',
     id: 'new_password',
     input: {
-      name: 'lastDonation',
+      name: 'newPassword',
       validation: { required: 'This field is required' }
     }
   },
@@ -56,18 +56,21 @@ const updatePasswordFields: {
     field: 'confirmPassword',
     id: 'confirm_password',
     input: {
-      name: 'lastDonation',
-      validation: { required: 'This field is required' }
+      name: 'confirmPassword',
+      validation: {
+        required: 'This field is required',
+        validate: (value, formValues) => {
+          if (value !== formValues.newPassword) {
+            return 'Passwords do not match';
+          }
+          return true;
+        }
+      }
     }
   }
 ];
 type FormData = {
-  firstName: string;
-  lastName: string;
-  displayName: string;
-  bloodGroup: string;
-  address: string;
-  phoneNo: string; // Adjust type if necessary
+  [K in typeof updatePasswordFields[number]['input']['name']]: string;
 };
 function UpdatePassword() {
   const { data: me, isLoading, isSuccess } = useGetMeQuery();
@@ -122,13 +125,14 @@ function UpdatePassword() {
                     <Grid item xs={12} sm={8}>
                       {isOpen ? (
                         <TextField
+                          type="password"
                           fullWidth
                           variant="standard"
                           color="secondary"
                           size="small"
                           disabled={field.input.disabled}
-                          error={!!errors[field.field]}
-                          helperText={errors[field.field]?.message}
+                          error={!!errors[field.input.name]}
+                          helperText={errors[field.input.name]?.message}
                           {...register(
                             field.input.name,
                             field.input.validation
