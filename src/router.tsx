@@ -231,12 +231,12 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
           {
             path: ':id',
             element: <ViewProfile />
-          },
-          {
-            path: 'settings',
-            element: <UserSettings />
           }
         ]
+      },
+      {
+        path: 'settings',
+        element: <UserSettings />
       }
     ]
   }

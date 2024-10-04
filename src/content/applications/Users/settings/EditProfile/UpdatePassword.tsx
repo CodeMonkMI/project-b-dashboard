@@ -1,0 +1,159 @@
+import ClearIcon from '@mui/icons-material/Clear';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Divider,
+  Grid,
+  TextField,
+  Typography
+} from '@mui/material';
+
+import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import Text from 'src/components/Text';
+import { useGetMeQuery } from 'src/redux/features/auth/authApiSlice';
+interface ValidationRule {
+  required?: boolean | string; // true or custom message
+  minLength?: { value: number; message: string };
+  maxLength?: { value: number; message: string };
+  pattern?: { value: RegExp; message: string };
+  validate?: (value: string) => boolean | string; // custom validation function
+}
+
+const updatePasswordFields: {
+  name: string;
+  field: string;
+  id: string;
+  input: {
+    disabled?: boolean;
+    name: string;
+    validation?: ValidationRule;
+  };
+}[] = [
+  {
+    name: 'Old Password',
+    field: 'oldPassword',
+    id: 'old_password',
+    input: {
+      name: 'lastDonation',
+      validation: { required: 'This field is required' }
+    }
+  },
+  {
+    name: 'New Password',
+    field: 'newPassword',
+    id: 'new_password',
+    input: {
+      name: 'lastDonation',
+      validation: { required: 'This field is required' }
+    }
+  },
+  {
+    name: 'Confirm Password',
+    field: 'confirmPassword',
+    id: 'confirm_password',
+    input: {
+      name: 'lastDonation',
+      validation: { required: 'This field is required' }
+    }
+  }
+];
+type FormData = {
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  bloodGroup: string;
+  address: string;
+  phoneNo: string; // Adjust type if necessary
+};
+function UpdatePassword() {
+  const { data: me, isLoading, isSuccess } = useGetMeQuery();
+  const [isOpen, setIsOpen] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors }
+  } = useForm();
+  const onSubmit = (data: FormData) => {
+    console.log(data);
+  };
+
+  return (
+    <Grid item xs={12} md={6}>
+      <Card>
+        <Box
+          p={3}
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Box>
+            <Typography variant="h4" gutterBottom>
+              Update Password
+            </Typography>
+            <Typography variant="subtitle2">Update your password</Typography>
+          </Box>
+          <Button
+            onClick={() => {
+              setIsOpen((prevState) => !prevState);
+            }}
+            variant="text"
+            startIcon={isOpen ? <ClearIcon /> : <EditTwoToneIcon />}
+          >
+            {isOpen ? 'Cancel' : 'Edit'}
+          </Button>
+        </Box>
+        <Divider />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <CardContent sx={{ p: 4 }}>
+            <Typography variant="subtitle2">
+              <Grid container spacing={0}>
+                {updatePasswordFields.map((field) => (
+                  <>
+                    <Grid item xs={12} sm={4} textAlign={{ sm: 'right' }}>
+                      <Box pr={3} pb={2}>
+                        {field.name}:
+                      </Box>
+                    </Grid>
+                    <Grid item xs={12} sm={8}>
+                      {isOpen ? (
+                        <TextField
+                          fullWidth
+                          variant="standard"
+                          color="secondary"
+                          size="small"
+                          disabled={field.input.disabled}
+                          error={!!errors[field.field]}
+                          helperText={errors[field.field]?.message}
+                          {...register(
+                            field.input.name,
+                            field.input.validation
+                          )}
+                        />
+                      ) : (
+                        <Text color="black">***********************</Text>
+                      )}
+                    </Grid>
+                  </>
+                ))}
+              </Grid>
+            </Typography>
+            {isOpen && (
+              <Grid justifyContent={'flex-end'} container spacing={0}>
+                <Button type="submit" variant="contained">
+                  Submit
+                </Button>
+              </Grid>
+            )}
+          </CardContent>
+        </form>
+      </Card>
+    </Grid>
+  );
+}
+
+export default UpdatePassword;
