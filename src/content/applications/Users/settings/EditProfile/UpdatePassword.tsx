@@ -11,10 +11,10 @@ import {
 } from '@mui/material';
 
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Text from 'src/components/Text';
-import { useGetMeQuery } from 'src/redux/features/auth/authApiSlice';
+import { useUpdatePasswordMutation } from 'src/redux/features/auth/authApiSlice';
 interface ValidationRule {
   required?: boolean | string; // true or custom message
   minLength?: { value: number; message: string };
@@ -73,17 +73,35 @@ type FormData = {
   [K in typeof updatePasswordFields[number]['input']['name']]: string;
 };
 function UpdatePassword() {
-  const { data: me, isLoading, isSuccess } = useGetMeQuery();
+  const [updatePassword, { isLoading: isUpdating, isError, isSuccess, error }] =
+    useUpdatePasswordMutation();
   const [isOpen, setIsOpen] = useState(false);
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors }
+    formState: { errors },
+    setError
   } = useForm();
   const onSubmit = (data: FormData) => {
-    console.log(data);
+    updatePassword(data);
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      setIsOpen(false);
+    }
+  }, [isSuccess]);
+  useEffect(() => {
+    if (isError) {
+      if ('status' in error) {
+        const data: FormData | {} | undefined = error.data;
+        Object.entries(data).map((item: any) => {
+          setError(item[0], { message: item[1] });
+        });
+      }
+    }
+  }, [isError]);
 
   return (
     <Grid item xs={12} md={6}>
