@@ -71,6 +71,25 @@ export const authApi = apiSlice.injectEndpoints({
           updateRequest.undo();
         }
       }
+    }),
+    updateProfile: builder.mutation({
+      query: (data) => ({
+        url: '/auth/update-profile', // Specify the correct endpoint
+        method: 'PUT', // Use PUT for updating resources
+        body: data // Pass the data to be updated
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        const updateRequest = dispatch(
+          authApi.util.updateQueryData('getMe', undefined, (draftUser: any) => {
+            Object.assign(draftUser.data.Profile, arg);
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          updateRequest.undo();
+        }
+      }
     })
   })
 });
@@ -80,5 +99,6 @@ export const {
   useRegisterMutation,
   useGetMeQuery,
   useUpdatePasswordMutation,
-  useUpdateInfoMutation
+  useUpdateInfoMutation,
+  useUpdateProfileMutation
 } = authApi;

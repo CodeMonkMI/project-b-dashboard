@@ -11,10 +11,13 @@ import {
 
 import ClearIcon from '@mui/icons-material/Clear';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Text from 'src/components/Text';
-import { useGetMeQuery } from 'src/redux/features/auth/authApiSlice';
+import {
+  useGetMeQuery,
+  useUpdateProfileMutation
+} from 'src/redux/features/auth/authApiSlice';
 interface ValidationRule {
   required?: boolean | string; // true or custom message
   minLength?: { value: number; message: string };
@@ -51,13 +54,32 @@ const personalDetailsFields: {
       validation: { required: 'This field is required' }
     }
   },
+
+  {
+    name: 'Father Name',
+    field: 'fatherName',
+    id: 'fatherName',
+    input: {
+      name: 'fatherName',
+      validation: {}
+    }
+  },
+  {
+    name: 'Mother Name',
+    field: 'motherName',
+    id: 'motherName',
+    input: {
+      name: 'motherName',
+      validation: {}
+    }
+  },
   {
     name: 'Display Name',
     field: 'displayName',
     id: 'displayName',
     input: {
       name: 'displayName',
-      validation: { required: 'This field is required' }
+      validation: {}
     }
   },
   {
@@ -65,17 +87,56 @@ const personalDetailsFields: {
     field: 'bloodGroup',
     id: 'blood_group',
     input: {
+      disabled: true,
       name: 'bloodGroup',
-      validation: { required: 'This field is required' }
+      validation: {}
     }
   },
   {
-    name: ' Address',
+    name: 'Full Address',
+    field: 'genAddress',
+    id: 'genAddress',
+    input: {
+      disabled: true,
+      name: 'genAddress',
+      validation: {}
+    }
+  },
+  {
+    name: 'Address',
     field: 'address',
+    id: 'address',
+    input: {
+      disabled: false,
+      name: 'address',
+      validation: {}
+    }
+  },
+  {
+    name: 'Street',
+    field: 'streetAddress',
     id: 'blood_group',
     input: {
-      name: 'address',
-      validation: { required: 'This field is required' }
+      name: 'streetAddress',
+      validation: {}
+    }
+  },
+  {
+    name: 'Sub-District',
+    field: 'upzila',
+    id: 'blood_group',
+    input: {
+      name: 'upzila',
+      validation: {}
+    }
+  },
+  {
+    name: 'District',
+    field: 'zila',
+    id: 'blood_group',
+    input: {
+      name: 'zila',
+      validation: {}
     }
   },
   {
@@ -84,17 +145,18 @@ const personalDetailsFields: {
     id: 'phone_number',
     input: {
       name: 'phoneNo',
-      validation: { required: 'This field is required' }
+      validation: {}
     }
   },
+
   {
-    name: 'Last Donation Date',
+    name: 'Last Donation',
     field: 'lastDonationDate',
     id: 'last_donation_date',
     input: {
       disabled: true,
       name: 'lastDonation',
-      validation: { required: 'This field is required' }
+      validation: {}
     }
   }
 ];
@@ -103,8 +165,10 @@ type FormData = {
   firstName: string;
   lastName: string;
   displayName: string;
-  bloodGroup: string;
-  address: string;
+  streetAddress: string;
+  city: string;
+  state: string;
+  zipCode: string;
   phoneNo: string; // Adjust type if necessary
 };
 
@@ -129,22 +193,43 @@ function PersonalDetails() {
         );
         return parts.join(', ');
       }
-      const { streetAddress, city, state, zipCode } = me.data.Profile;
+      const { streetAddress, address, upzila, zila } = me.data.Profile;
       const generatedData = {
         ...me.data.Profile,
+        genAddress: generateAddress(address, streetAddress, upzila, zila),
         ...me.data,
-        address: generateAddress(streetAddress, city, state, zipCode),
         role: me.data.role.name
       };
       personalDetailsFields.map((field) => {
-        setValue(field.input.name, generatedData[field.field]);
+        if (!field.input.disabled) {
+          setValue(field.input.name, generatedData[field.field]);
+        }
       });
       setUserData(generatedData);
     }
   }, [isSuccess, me]);
 
-  const onSubmit = (data: FormData) => {};
+  const [updateProfile, { isSuccess: isSuccessUpdate, isError, error }] =
+    useUpdateProfileMutation();
 
+  const onSubmit = (data: FormData) => {
+    updateProfile(data);
+  };
+  useEffect(() => {
+    if (isSuccessUpdate) {
+      setIsOpen(false);
+    }
+  }, [isSuccessUpdate]);
+  useEffect(() => {
+    if (isError) {
+      if ('status' in error) {
+        const data: FormData | {} | undefined = error.data;
+        Object.entries(data).map((item: any) => {
+          setError(item[0], { message: item[1] });
+        });
+      }
+    }
+  }, [isError]);
   return (
     <Grid item xs={12}>
       <Card>
@@ -178,20 +263,20 @@ function PersonalDetails() {
             <Typography variant="subtitle2">
               <Grid container spacing={0}>
                 {personalDetailsFields.map((field) => (
-                  <>
+                  <React.Fragment key={field.id}>
                     <Grid
                       item
                       xs={12}
                       sm={4}
-                      md={3}
+                      md={2}
                       textAlign={{ sm: 'right' }}
                     >
                       <Box pr={3} pb={2}>
                         {field.name}:
                       </Box>
                     </Grid>
-                    <Grid item xs={12} sm={8} md={9}>
-                      {isOpen ? (
+                    <Grid item xs={12} sm={8} md={4}>
+                      {isOpen && !field.input.disabled ? (
                         <TextField
                           fullWidth
                           variant="standard"
@@ -209,7 +294,7 @@ function PersonalDetails() {
                         <Text color="black">{userData?.[field.field]}</Text>
                       )}
                     </Grid>
-                  </>
+                  </React.Fragment>
                 ))}
               </Grid>
               {isOpen && (
