@@ -10,7 +10,7 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Text from 'src/components/Text';
 import {
@@ -129,10 +129,10 @@ function AccountDetails() {
         >
           <Box>
             <Typography variant="h4" gutterBottom>
-              Email Addresses
+              Account Details
             </Typography>
             <Typography variant="subtitle2">
-              Manage details related to your associated email addresses
+              Manage details related to your account
             </Typography>
           </Box>
 
@@ -152,7 +152,7 @@ function AccountDetails() {
             <Typography variant="subtitle2">
               <Grid container spacing={0}>
                 {accountSettingsFields.map((field) => (
-                  <>
+                  <React.Fragment key={field.id}>
                     <Grid
                       item
                       xs={12}
@@ -183,7 +183,7 @@ function AccountDetails() {
                         <Text color="black">{userData?.[field.field]}</Text>
                       )}
                     </Grid>
-                  </>
+                  </React.Fragment>
                 ))}
               </Grid>
             </Typography>

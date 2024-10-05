@@ -263,7 +263,7 @@ function PersonalDetails() {
             <Typography variant="subtitle2">
               <Grid container spacing={0}>
                 {personalDetailsFields.map((field) => (
-                  <React.Fragment key={field.id}>
+                  <React.Fragment key={Math.random()}>
                     <Grid
                       item
                       xs={12}

@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Text from 'src/components/Text';
 import { useUpdatePasswordMutation } from 'src/redux/features/auth/authApiSlice';
@@ -134,7 +134,7 @@ function UpdatePassword() {
             <Typography variant="subtitle2">
               <Grid container spacing={0}>
                 {updatePasswordFields.map((field) => (
-                  <>
+                  <React.Fragment key={field.id}>
                     <Grid item xs={12} sm={4} textAlign={{ sm: 'right' }}>
                       <Box pr={3} pb={2}>
                         {field.name}:
@@ -160,7 +160,7 @@ function UpdatePassword() {
                         <Text color="black">***********************</Text>
                       )}
                     </Grid>
-                  </>
+                  </React.Fragment>
                 ))}
               </Grid>
             </Typography>
