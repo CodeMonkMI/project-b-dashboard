@@ -15,13 +15,17 @@ const SidebarLayout: FC<SidebarLayoutProps> = () => {
   const theme = useTheme();
   const { isAuthenticated, me } = useSelector((state: any) => state.auth);
 
-  const { isLoading, isSuccess } = useGetMeQuery(undefined, {
+  const { isLoading, isSuccess, isError } = useGetMeQuery(undefined, {
     skip: !isAuthenticated
   });
 
   if (!isAuthenticated) {
     return <Navigate to={'/sign-in'} />;
   }
+  if (isError) {
+    return <Navigate to={'/status/500'} />;
+  }
+
   return (
     <>
       <Box

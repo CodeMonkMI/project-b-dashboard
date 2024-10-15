@@ -124,10 +124,7 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
           }
         ]
       },
-      {
-        path: '*',
-        element: <Status404 />
-      },
+
       {
         path: '/',
         element: <SidebarLayout />,
@@ -163,7 +160,6 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
               }
             ]
           },
-
           {
             path: 'make-request',
             element: <MakeRequest />
@@ -207,6 +203,10 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
             element: <Messenger />
           }
         ]
+      },
+      {
+        path: '*',
+        element: <Status404 />
       }
     ]
   },

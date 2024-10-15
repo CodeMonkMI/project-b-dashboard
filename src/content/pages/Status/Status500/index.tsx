@@ -1,17 +1,8 @@
-import { useState } from 'react';
-import {
-  Box,
-  Typography,
-  Hidden,
-  Container,
-  Button,
-  Grid
-} from '@mui/material';
+import { Box, Button, Container, Grid, Typography } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
-import RefreshTwoToneIcon from '@mui/icons-material/RefreshTwoTone';
-import LoadingButton from '@mui/lab/LoadingButton';
 
 import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router';
 
 const GridWrapper = styled(Grid)(
   ({ theme }) => `
@@ -44,11 +35,7 @@ const TypographySecondary = styled(Typography)(
 );
 
 function Status500() {
-  const [pending, setPending] = useState(false);
-  function handleClick() {
-    setPending(true);
-  }
-
+  const navigate = useNavigate();
   return (
     <>
       <Helmet>
@@ -63,7 +50,6 @@ function Status500() {
         >
           <Grid
             xs={12}
-            md={6}
             alignItems="center"
             display="flex"
             justifyContent="center"
@@ -88,51 +74,16 @@ function Status500() {
                   The server encountered an internal error and was not able to
                   complete your request
                 </Typography>
-                <LoadingButton
-                  onClick={handleClick}
-                  loading={pending}
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<RefreshTwoToneIcon />}
+                <Button
+                  onClick={() => navigate(-1)}
+                  variant="contained"
+                  sx={{ ml: 1 }}
                 >
-                  Refresh view
-                </LoadingButton>
-                <Button href="/overview" variant="contained" sx={{ ml: 1 }}>
                   Go back
                 </Button>
               </Box>
             </Container>
           </Grid>
-          <Hidden mdDown>
-            <GridWrapper
-              xs={12}
-              md={6}
-              alignItems="center"
-              display="flex"
-              justifyContent="center"
-              item
-            >
-              <Container maxWidth="sm">
-                <Box textAlign="center">
-                  <TypographyPrimary variant="h1" sx={{ my: 2 }}>
-                    Tokyo Free White React Typescript Admin Dashboard
-                  </TypographyPrimary>
-                  <TypographySecondary
-                    variant="h4"
-                    fontWeight="normal"
-                    sx={{ mb: 4 }}
-                  >
-                    High performance React template built with lots of powerful
-                    Material-UI components across multiple product niches for
-                    fast &amp; perfect apps development processes.
-                  </TypographySecondary>
-                  <Button href="/overview" size="large" variant="contained">
-                    Overview
-                  </Button>
-                </Box>
-              </Container>
-            </GridWrapper>
-          </Hidden>
         </Grid>
       </MainContent>
     </>

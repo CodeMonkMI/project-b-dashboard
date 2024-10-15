@@ -14,7 +14,6 @@ import { decodeToken, getToken } from './redux/utils/token';
 const token = getToken();
 if (token) {
   const user = decodeToken(token);
-  console.log(user);
   store.dispatch(logIn(user));
 }
 
