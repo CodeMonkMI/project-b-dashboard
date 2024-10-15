@@ -4,6 +4,7 @@ import Footer from 'src/components/Footer';
 import { Container, Grid } from '@mui/material';
 
 import { useParams } from 'react-router';
+import Loader from 'src/components/Loader';
 import { useGetUserQuery } from 'src/redux/features/user/userApiSlice';
 import Addresses from './Addresses';
 import Contribution from './Contribution';
@@ -17,7 +18,7 @@ const ViewProfile = () => {
 
   const { data, isLoading } = useGetUserQuery(id);
 
-  if (isLoading) return <h3>Loading....</h3>;
+  if (isLoading) return <Loader />;
   const userData = data.data;
   return (
     <>

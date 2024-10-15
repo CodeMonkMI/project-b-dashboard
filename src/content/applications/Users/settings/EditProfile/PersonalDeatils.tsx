@@ -13,6 +13,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import Loader from 'src/components/Loader';
 import Text from 'src/components/Text';
 import {
   useGetMeQuery,
@@ -184,7 +185,9 @@ function PersonalDetails() {
     formState: { errors },
     setError
   } = useForm();
-  if (isLoading) return <div>Loading...</div>;
+
+  if (isLoading) return <Loader />;
+
   useEffect(() => {
     if (isSuccess && me) {
       function generateAddress(streetAddress, city, state, zipCode) {

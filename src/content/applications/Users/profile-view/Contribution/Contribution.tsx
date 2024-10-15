@@ -10,6 +10,7 @@ import {
   useTheme
 } from '@mui/material';
 import { useParams } from 'react-router';
+import Loader from 'src/components/Loader';
 import { useGetUserRequestContributionQuery } from 'src/redux/features/request/requestApiSlice';
 import LastDonation from './LastDonation';
 
@@ -39,7 +40,7 @@ const Contribution = () => {
     };
   }
 
-  if (isLoading) return <h3>Loading....</h3>;
+  if (isLoading) return <Loader />;
   const stats: StatsTypes = data.data;
   return (
     <Card>

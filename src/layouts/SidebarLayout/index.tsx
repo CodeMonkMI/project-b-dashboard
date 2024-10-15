@@ -1,8 +1,8 @@
 import { Box, alpha, lighten, useTheme } from '@mui/material';
 import { FC, ReactNode } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-
 import { useSelector } from 'react-redux';
+import { Navigate, Outlet } from 'react-router-dom';
+import Loader from 'src/components/Loader';
 import { useGetMeQuery } from 'src/redux/features/auth/authApiSlice';
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -70,7 +70,7 @@ const SidebarLayout: FC<SidebarLayoutProps> = () => {
           }}
         >
           <Box display="block">
-            {isLoading && <h2>Loading...</h2>}
+            {isLoading && <Loader />}
             {isSuccess && <Outlet />}
           </Box>
         </Box>

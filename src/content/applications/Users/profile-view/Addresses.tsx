@@ -10,13 +10,14 @@ import {
 
 import { ArrowForwardTwoTone } from '@mui/icons-material';
 import { useParams } from 'react-router';
+import Loader from 'src/components/Loader';
 import { useGetUserQuery } from 'src/redux/features/user/userApiSlice';
 
 function Addresses() {
   const { id } = useParams<{ id: string }>();
 
   const { data, isLoading, isSuccess, isError, error } = useGetUserQuery(id);
-  if (isLoading) return <h3>Loading....</h3>;
+  if (isLoading) return <Loader />;
   const profile = data.data?.Profile;
   return (
     <Grid

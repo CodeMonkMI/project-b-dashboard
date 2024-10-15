@@ -3,8 +3,8 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 import { Box } from '@mui/material';
 import { useSelector } from 'react-redux';
+import Loader from 'src/components/Loader';
 import { useGetMeQuery } from 'src/redux/features/auth/authApiSlice';
-
 interface BaseLayoutProps {
   children?: ReactNode;
 }
@@ -27,7 +27,7 @@ const AdminLayout: FC<BaseLayoutProps> = ({ children }) => {
           height: '100%'
         }}
       >
-        {isLoading && <h2>Loading....</h2>}
+        {isLoading && <Loader />}
         {isSuccess && (children || <Outlet />)}
       </Box>
     );

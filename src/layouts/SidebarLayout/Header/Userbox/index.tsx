@@ -15,9 +15,9 @@ import {
 import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
 import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
-import SignOut from './SignOut';
-
+import Loader from 'src/components/Loader';
 import { useGetMeQuery } from 'src/redux/features/auth/authApiSlice';
+import SignOut from './SignOut';
 import {
   MenuUserBox,
   UserBoxButton,
@@ -45,7 +45,7 @@ function HeaderUserbox() {
     setOpen(false);
   };
 
-  if (isLoading) return <h2>Loading...</h2>;
+  if (isLoading) return <Loader />;
 
   return (
     <>
