@@ -127,103 +127,101 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
       {
         path: '*',
         element: <Status404 />
+      },
+      {
+        path: '/',
+        element: <SidebarLayout />,
+        children: [
+          {
+            path: '',
+            element: <Crypto />
+          },
+          {
+            path: 'users',
+            element: <AdminLayout />,
+            children: [
+              {
+                path: 'all',
+                element: <AllUsers />
+              },
+              {
+                path: 'pending',
+                element: <PendingUser />
+              },
+              {
+                path: 'add',
+                element: <AddUser />
+              },
+              {
+                path: 'view',
+                children: [
+                  {
+                    path: ':id',
+                    element: <ViewProfile />
+                  }
+                ]
+              }
+            ]
+          },
+
+          {
+            path: 'make-request',
+            element: <MakeRequest />
+          },
+          {
+            path: 'donor-finder',
+            element: <DonorFinder />
+          },
+          {
+            path: 'request',
+            children: [
+              {
+                path: 'all',
+                element: <RequestManage />
+              },
+              {
+                path: 'completed',
+                element: <RequestCompleted />
+              },
+              {
+                path: 'Pending',
+                element: <RequestPending />
+              },
+              {
+                path: 'activity',
+                element: <RequestActivity />
+              },
+              {
+                path: 'view',
+                children: [
+                  {
+                    path: ':id',
+                    element: <ViewProfile />
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            path: 'messenger',
+            element: <Messenger />
+          }
+        ]
       }
     ]
   },
-  {
-    path: 'dashboards',
-    element: <SidebarLayout />,
-    children: [
-      {
-        path: '',
-        element: <Crypto />
-      },
-      {
-        path: 'users',
-        element: <AdminLayout />,
-        children: [
-          {
-            path: 'all',
-            element: <AllUsers />
-          },
-          {
-            path: 'pending',
-            element: <PendingUser />
-          },
-          {
-            path: 'add',
-            element: <AddUser />
-          },
-          {
-            path: 'view',
-            children: [
-              {
-                path: ':id',
-                element: <ViewProfile />
-              }
-            ]
-          }
-        ]
-      },
-      {
-        path: 'history',
-        element: <History />
-      },
-      {
-        path: 'make-request',
-        element: <MakeRequest />
-      },
-      {
-        path: 'donor-finder',
-        element: <DonorFinder />
-      },
-      {
-        path: 'request',
-        children: [
-          {
-            path: 'all',
-            element: <RequestManage />
-          },
-          {
-            path: 'completed',
-            element: <RequestCompleted />
-          },
-          {
-            path: 'Pending',
-            element: <RequestPending />
-          },
-          {
-            path: 'activity',
-            element: <RequestActivity />
-          },
-          {
-            path: 'view',
-            children: [
-              {
-                path: ':id',
-                element: <ViewProfile />
-              }
-            ]
-          }
-        ]
-      },
-      {
-        path: 'messenger',
-        element: <Messenger />
-      }
-    ]
-  },
+
   {
     path: 'management',
     element: <SidebarLayout />,
     children: [
       {
         path: '',
-        element: <Navigate to="transactions" replace />
+        element: <Navigate to="settings" replace />
       },
       {
-        path: 'transactions',
-        element: <Transactions />
+        path: 'history',
+        element: <History />
       },
       {
         path: 'profile',

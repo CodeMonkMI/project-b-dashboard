@@ -28,7 +28,7 @@ const RequestMenu = () => {
                 disableRipple
                 component={RouterLink}
                 onClick={closeSidebar}
-                to="/dashboards/request/pending"
+                to="/request/pending"
                 startIcon={<TableChartTwoToneIcon />}
               >
                 Pending
@@ -40,7 +40,7 @@ const RequestMenu = () => {
                 disableRipple
                 component={RouterLink}
                 onClick={closeSidebar}
-                to="/dashboards/request/all"
+                to="/request/all"
                 startIcon={<TableChartTwoToneIcon />}
               >
                 Manage
@@ -51,7 +51,7 @@ const RequestMenu = () => {
                 disableRipple
                 component={RouterLink}
                 onClick={closeSidebar}
-                to="/dashboards/request/completed"
+                to="/request/completed"
                 startIcon={<TableChartTwoToneIcon />}
               >
                 Completed
@@ -62,7 +62,7 @@ const RequestMenu = () => {
                 disableRipple
                 component={RouterLink}
                 onClick={closeSidebar}
-                to="/dashboards/request/activity"
+                to="/request/activity"
                 startIcon={<TableChartTwoToneIcon />}
               >
                 Activity

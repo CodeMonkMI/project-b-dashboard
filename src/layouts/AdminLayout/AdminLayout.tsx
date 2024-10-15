@@ -18,10 +18,8 @@ const AdminLayout: FC<BaseLayoutProps> = ({ children }) => {
   if (!isAuthenticated) {
     return <Navigate to={'/sign-in'} />;
   }
-  if (
-    data.data.role.role === 'super_admin' ||
-    data.data.role.role === 'admin'
-  ) {
+
+  if (isSuccess && ['super_admin', 'admin'].includes(data.data.role.role)) {
     return (
       <Box
         sx={{
@@ -35,7 +33,7 @@ const AdminLayout: FC<BaseLayoutProps> = ({ children }) => {
     );
   }
 
-  return <Navigate to={'/dashboards'} />;
+  return <Navigate to={'/'} />;
 };
 
 export default AdminLayout;

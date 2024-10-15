@@ -51,15 +51,9 @@ const SignInForm = () => {
   }, [isError, isLoading]);
   useEffect(() => {
     if (isSuccess && !isLoading) {
-      navigate('/dashboards');
+      navigate('/');
     }
   }, [isError, isLoading]);
-
-  useEffect(() => {
-    if (isLoading) {
-      console.log('loading....');
-    }
-  }, [isLoading]);
 
   return (
     <>

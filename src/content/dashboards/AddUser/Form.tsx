@@ -93,7 +93,7 @@ const AddUserForm = () => {
     if (isAddUserSuccess) {
       clearErrors();
       reset();
-      navigate('/dashboards/users/all');
+      navigate('/users/all');
     }
   }, [isAddUserSuccess]);
 

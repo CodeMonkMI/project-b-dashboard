@@ -119,7 +119,7 @@ function HeaderUserbox() {
 
           <ListItem
             button
-            to="/management/profile/settings"
+            to="/management/settings"
             component={NavLink}
             onClick={() => {
               setOpen(false);

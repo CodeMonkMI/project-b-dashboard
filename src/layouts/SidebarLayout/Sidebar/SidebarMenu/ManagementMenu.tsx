@@ -29,7 +29,7 @@ const ManagementMenu = () => {
                     disableRipple
                     component={RouterLink}
                     onClick={closeSidebar}
-                    to="/management/profile/details"
+                    to="/management/details"
                     startIcon={<AccountCircleTwoToneIcon />}
                   >
                     Featured
@@ -40,7 +40,7 @@ const ManagementMenu = () => {
                     disableRipple
                     component={RouterLink}
                     onClick={closeSidebar}
-                    to="/management/profile/settings"
+                    to="/management/settings"
                     startIcon={<DisplaySettingsTwoToneIcon />}
                   >
                     Growth
@@ -53,7 +53,7 @@ const ManagementMenu = () => {
                 disableRipple
                 component={RouterLink}
                 onClick={closeSidebar}
-                to="/dashboards/history"
+                to="/management/history"
                 startIcon={<DisplaySettingsTwoToneIcon />}
               >
                 History
@@ -64,7 +64,7 @@ const ManagementMenu = () => {
                 disableRipple
                 component={RouterLink}
                 onClick={closeSidebar}
-                to="/management/profile/settings"
+                to="/management/settings"
                 startIcon={<DisplaySettingsTwoToneIcon />}
               >
                 Settings

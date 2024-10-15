@@ -198,7 +198,7 @@ const columns = ({
     renderCell: (params) => {
       return (
         <Stack spacing={0.5} direction="row">
-          <Link to={`/dashboards/users/view/${params.row.username}`}>
+          <Link to={`/users/view/${params.row.username}`}>
             <IconButton aria-label="edit" color="primary">
               <RemoveRedEyeIcon />
             </IconButton>

@@ -19,7 +19,7 @@ const GeneralMenu = () => {
                 disableRipple
                 component={RouterLink}
                 onClick={closeSidebar}
-                to="/dashboards"
+                to="/"
                 startIcon={<DesignServicesTwoToneIcon />}
               >
                 Dashboard
@@ -30,7 +30,7 @@ const GeneralMenu = () => {
                 disableRipple
                 component={RouterLink}
                 onClick={closeSidebar}
-                to="/dashboards/make-request"
+                to="/make-request"
                 startIcon={<DesignServicesTwoToneIcon />}
               >
                 Need Blood?
@@ -42,7 +42,7 @@ const GeneralMenu = () => {
                   disableRipple
                   component={RouterLink}
                   onClick={closeSidebar}
-                  to="/dashboards/donor-finder"
+                  to="/donor-finder"
                   startIcon={<DesignServicesTwoToneIcon />}
                 >
                   Donor Finder

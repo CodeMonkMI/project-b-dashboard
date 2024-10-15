@@ -31,7 +31,7 @@ const UsersMenu = () => {
                 disableRipple
                 component={RouterLink}
                 onClick={closeSidebar}
-                to="/dashboards/users/add"
+                to="/users/add"
                 startIcon={<BrightnessLowTwoToneIcon />}
               >
                 Add
@@ -44,7 +44,7 @@ const UsersMenu = () => {
                     disableRipple
                     component={RouterLink}
                     onClick={closeSidebar}
-                    to="/dashboards/users/pending"
+                    to="/users/pending"
                     startIcon={<MmsTwoToneIcon />}
                   >
                     Pending
@@ -57,7 +57,7 @@ const UsersMenu = () => {
                 disableRipple
                 component={RouterLink}
                 onClick={closeSidebar}
-                to="/dashboards/users/all"
+                to="/users/all"
                 startIcon={<MmsTwoToneIcon />}
               >
                 Manage

@@ -10,9 +10,9 @@ interface BaseLayoutProps {
 
 const AuthLayout: FC<BaseLayoutProps> = ({ children }) => {
   const { isAuthenticated } = useSelector((state: any) => state.auth);
-  console.log('run on base layout => ', isAuthenticated);
+
   if (isAuthenticated) {
-    return <Navigate to={'/dashboards'} />;
+    return <Navigate to={'/'} />;
   }
   return (
     <Box
