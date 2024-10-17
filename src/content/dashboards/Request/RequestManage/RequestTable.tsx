@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Loader from 'src/components/Loader';
@@ -35,6 +35,7 @@ const RequestTable = () => {
   const [holdStatusRequest] = useHoldStatusRequestMutation();
   const [deleteRequest] = useRemoveRequestMutation();
   const [completeRequest] = useCompleteRequestMutation();
+  const [filterModel, setFilterModel] = useState({ items: [] }); // Add state for filter model
 
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
     if (isLoading || isError) return [];
@@ -122,6 +123,15 @@ const RequestTable = () => {
           initialState={{
             pagination: {
               paginationModel: { pageSize: 10, page: 0 }
+            }
+          }}
+          disableColumnFilter
+          disableColumnSelector
+          disableDensitySelector
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true
             }
           }}
         />

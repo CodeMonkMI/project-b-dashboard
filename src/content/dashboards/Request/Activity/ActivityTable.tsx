@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
 import { useGetAllActivityQuery } from 'src/redux/features/request/requestApiSlice';
 import { activityTableDateFormatter } from 'src/utils/dateFormatrer';
@@ -60,6 +60,15 @@ const ActivityTable = () => {
           initialState={{
             pagination: {
               paginationModel: { pageSize: 10, page: 0 }
+            }
+          }}
+          disableColumnFilter
+          disableColumnSelector
+          disableDensitySelector
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true
             }
           }}
         />

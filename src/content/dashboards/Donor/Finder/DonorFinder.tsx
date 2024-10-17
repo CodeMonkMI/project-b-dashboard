@@ -27,8 +27,12 @@ const DonorFinder = () => {
                 findDonor={findDonor}
                 {...{ isLoading, isSuccess, isError, error }}
               />
-              <h2>Donor List</h2>
-              <DonorFinderTable data={isSuccess ? data.data : []} />
+              {isSuccess && data.data.length > 0 && (
+                <>
+                  <h2>Donor List</h2>
+                  <DonorFinderTable data={data.data} />
+                </>
+              )}
             </Box>
           </Grid>
         </Grid>

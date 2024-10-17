@@ -5,7 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useMemo } from 'react';
 import {
   useGetUsersQuery,
@@ -79,6 +79,15 @@ export default function EnhancedTable() {
           initialState={{
             pagination: {
               paginationModel: { pageSize: 10, page: 0 }
+            }
+          }}
+          disableColumnFilter
+          disableColumnSelector
+          disableDensitySelector
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true
             }
           }}
         />

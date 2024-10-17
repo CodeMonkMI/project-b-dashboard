@@ -8,7 +8,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -98,6 +98,15 @@ export default function EnhancedTable() {
           initialState={{
             pagination: {
               paginationModel: { pageSize: 10, page: 0 }
+            }
+          }}
+          disableColumnFilter
+          disableColumnSelector
+          disableDensitySelector
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true
             }
           }}
         />
