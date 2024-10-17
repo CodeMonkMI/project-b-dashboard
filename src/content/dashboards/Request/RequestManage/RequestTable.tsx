@@ -11,6 +11,8 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+import Loader from 'src/components/Loader';
 import {
   useCompleteRequestMutation,
   useGetAllRequestQuery,
@@ -21,8 +23,12 @@ import {
 import { requestTableDateFormatter } from 'src/utils/dateFormatrer';
 import AssignDonor from './AssignDonor';
 import SingleHistory from './SingleHistory';
+
 const RequestTable = () => {
   const { data: requestData, isLoading, isError } = useGetAllRequestQuery();
+
+  const { me } = useSelector((state: any) => state.auth);
+
   const [isHistoryOpen, setIsHistoryOpen] = useState<string | null>(null);
   const [isAssignedOpen, setIsAssignOpen] = useState<string | null>(null);
   const [makeProgressRequest] = useMakeProgressRequestMutation();
@@ -78,6 +84,8 @@ const RequestTable = () => {
     return data;
   }, [isAssignedOpen, requestData]);
 
+  if (isLoading) return <Loader />;
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -105,7 +113,8 @@ const RequestTable = () => {
             requestHold: holdStatusRequest,
             assignedOpen: setIsAssignOpen,
             completeRequest,
-            deleteRequest
+            deleteRequest,
+            me
           })}
           disableColumnMenu
           rowSelection={false}
@@ -121,21 +130,29 @@ const RequestTable = () => {
   );
 };
 
-const columns = (props: {
+interface ColumnProps {
   historyOpen: any;
   requestHold: any;
   makeProgressRequest: any;
   assignedOpen: any;
   completeRequest: any;
   deleteRequest: any;
-}): GridColDef[] => {
+  me: {
+    role: {
+      role: string;
+    };
+  };
+}
+
+const columns = (props: ColumnProps): GridColDef[] => {
   const {
     historyOpen,
     makeProgressRequest,
     requestHold,
     assignedOpen,
     completeRequest,
-    deleteRequest
+    deleteRequest,
+    me
   } = props;
   return [
     {
@@ -234,36 +251,40 @@ const columns = (props: {
               <HistoryIcon />
             </IconButton>
             {/* </Link> */}
+            {me?.role?.role === 'super_admin' && (
+              <>
+                <IconButton
+                  aria-label="edit"
+                  color="primary"
+                  disabled={params.row.status === 'progress'}
+                  onClick={() => makeProgressRequest(params.row.id)}
+                >
+                  <ArrowBackIosNewIcon />
+                </IconButton>
 
-            <IconButton
-              aria-label="edit"
-              color="primary"
-              disabled={params.row.status === 'progress'}
-              onClick={() => makeProgressRequest(params.row.id)}
-            >
-              <ArrowBackIosNewIcon />
-            </IconButton>
+                <IconButton
+                  aria-label="edit"
+                  color="primary"
+                  disabled={
+                    params.row.status !== 'progress' &&
+                    params.row.status !== 'ready'
+                  }
+                  onClick={() => assignedOpen(params.row.id)}
+                >
+                  <PersonAddAltIcon />
+                </IconButton>
 
-            <IconButton
-              aria-label="edit"
-              color="primary"
-              disabled={
-                params.row.status !== 'progress' &&
-                params.row.status !== 'ready'
-              }
-              onClick={() => assignedOpen(params.row.id)}
-            >
-              <PersonAddAltIcon />
-            </IconButton>
+                <IconButton
+                  aria-label="edit"
+                  color="secondary"
+                  onClick={() => requestHold(params.row.id)}
+                  disabled={params.row.status === 'hold'}
+                >
+                  <BlockIcon />
+                </IconButton>
+              </>
+            )}
 
-            <IconButton
-              aria-label="edit"
-              color="secondary"
-              onClick={() => requestHold(params.row.id)}
-              disabled={params.row.status === 'hold'}
-            >
-              <BlockIcon />
-            </IconButton>
             <IconButton
               aria-label="edit"
               color="error"
@@ -272,14 +293,16 @@ const columns = (props: {
               <DeleteIcon />
             </IconButton>
 
-            <IconButton
-              disabled={params.row.status !== 'ready'}
-              aria-label="edit"
-              color="success"
-              onClick={() => completeRequest(params.row.id)}
-            >
-              <CheckIcon />
-            </IconButton>
+            {me?.role?.role === 'super_admin' && (
+              <IconButton
+                disabled={params.row.status !== 'ready'}
+                aria-label="edit"
+                color="success"
+                onClick={() => completeRequest(params.row.id)}
+              >
+                <CheckIcon />
+              </IconButton>
+            )}
           </Stack>
         );
       }
