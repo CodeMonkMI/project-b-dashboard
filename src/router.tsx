@@ -22,6 +22,8 @@ const Crypto = Loader(lazy(() => import('src/content/dashboards/Crypto')));
 const SignIn = Loader(lazy(() => import('src/content/signIn/SignIn')));
 const SignUp = Loader(lazy(() => import('src/content/signUp/SignUp')));
 const ForgotPassword = Loader(lazy(() => import('src/content/ForgotPassword')));
+const VerifyOtp = Loader(lazy(() => import('src/content/VerifyOtp')));
+const SetNewPassword = Loader(lazy(() => import('src/content/SetNewPassword')));
 
 // dashboard
 const AllUsers = Loader(lazy(() => import('src/content/dashboards/Users')));
@@ -105,6 +107,22 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
         element: (
           <AuthLayout>
             <ForgotPassword />
+          </AuthLayout>
+        )
+      },
+      {
+        path: '/verify-otp',
+        element: (
+          <AuthLayout>
+            <VerifyOtp />
+          </AuthLayout>
+        )
+      },
+      {
+        path: '/set-new-password',
+        element: (
+          <AuthLayout>
+            <SetNewPassword />
           </AuthLayout>
         )
       },

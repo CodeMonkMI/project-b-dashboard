@@ -7,27 +7,30 @@ import TextField from '@mui/material/TextField';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import { useRecoverPasswordMutation } from 'src/redux/features/auth/authApiSlice';
+import { useVerifyOtpMutation } from 'src/redux/features/auth/authApiSlice';
 // form values type
 export interface ForgotPasswordFormValues {
-  email: string;
+  otp: string;
 }
 
-const ForgotPasswordForm = () => {
+const VerifyOtpForm = () => {
   const navigate = useNavigate();
-  const [recoverPassword, { isError, isLoading, isSuccess, error }] =
-    useRecoverPasswordMutation();
+  const [VerifyOtp, { isError, isLoading, isSuccess, error, data }] =
+    useVerifyOtpMutation();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    setError,
-    getValues
+    setError
   } = useForm<ForgotPasswordFormValues>();
 
   const submitHandler = (data: ForgotPasswordFormValues) => {
-    recoverPassword(data);
+    const email = localStorage.getItem('saveEmail');
+    VerifyOtp({
+      email,
+      otp: data.otp
+    });
   };
 
   useEffect(() => {
@@ -45,9 +48,8 @@ const ForgotPasswordForm = () => {
   }, [isError, isLoading]);
   useEffect(() => {
     if (isSuccess && !isLoading) {
-      const email = getValues('email');
-      localStorage.setItem('saveEmail', email);
-      navigate('/verify-otp');
+      localStorage.removeItem('saveEmail');
+      navigate(`/set-new-password?data=${data.data}`);
     }
   }, [isError, isLoading]);
 
@@ -73,24 +75,24 @@ const ForgotPasswordForm = () => {
         <Box width={'100%'} sx={{ mb: 2 }}>
           <Controller
             control={control}
-            name="email"
+            name="otp"
             rules={{
               required: 'This field is required'
             }}
             render={({ field: { onChange, onBlur, value, ref } }) => (
               <>
                 <TextField
-                  autoComplete="email"
-                  name="email"
+                  autoComplete="otp"
+                  name="otp"
                   fullWidth
-                  id="email"
-                  label="Email or Username"
+                  id="otp"
+                  label="OTP"
                   onChange={onChange}
                   onBlur={onBlur}
                   value={value}
                   autoFocus
-                  error={!!errors?.email}
-                  helperText={errors?.email?.message}
+                  error={!!errors?.otp}
+                  helperText={errors?.otp?.message}
                   sx={{ width: '100%' }}
                 />
               </>
@@ -107,11 +109,11 @@ const ForgotPasswordForm = () => {
           </Stack>
         )}
         <Button type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
-          Send
+          Verify
         </Button>
       </Box>
     </>
   );
 };
 
-export default ForgotPasswordForm;
+export default VerifyOtpForm;

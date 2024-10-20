@@ -90,6 +90,33 @@ export const authApi = apiSlice.injectEndpoints({
           updateRequest.undo();
         }
       }
+    }),
+    recoverPassword: builder.mutation({
+      query: (data) => ({
+        url: '/auth/recover-password',
+        method: 'post',
+        body: data
+      })
+    }),
+    setNewPassword: builder.mutation({
+      query: (data) => ({
+        url: '/auth/set-password',
+        method: 'put',
+        body: data
+      })
+    }),
+    verifyOtp: builder.mutation({
+      query: (data) => ({
+        url: '/auth/verify-otp',
+        method: 'post',
+        body: data
+      })
+    }),
+    verifyVerificationId: builder.query({
+      query: (data) => ({
+        url: `/auth/verify-verification-id?data=${data}`,
+        method: 'get'
+      })
     })
   })
 });
@@ -100,5 +127,9 @@ export const {
   useGetMeQuery,
   useUpdatePasswordMutation,
   useUpdateInfoMutation,
-  useUpdateProfileMutation
+  useUpdateProfileMutation,
+  useRecoverPasswordMutation,
+  useVerifyOtpMutation,
+  useVerifyVerificationIdQuery,
+  useSetNewPasswordMutation
 } = authApi;
