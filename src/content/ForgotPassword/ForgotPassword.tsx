@@ -3,18 +3,16 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { Helmet } from 'react-helmet-async';
-import { Link as RouterLink } from 'react-router-dom';
-import SignInForm from './SignInForm';
+import ForgotPasswordForm from './ForgotPasswordForm';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function SignInSide() {
+export default function ForgotPassword() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <Helmet>
@@ -53,25 +51,9 @@ export default function SignInSide() {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign in
+              Recover Password
             </Typography>
-            <SignInForm />
-            <Grid container>
-              <Grid item xs>
-                <Link
-                  component={RouterLink}
-                  to="/forgot-password"
-                  variant="body2"
-                >
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link to="/sign-up" component={RouterLink} variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
+            <ForgotPasswordForm />
           </Box>
         </Grid>
       </Grid>

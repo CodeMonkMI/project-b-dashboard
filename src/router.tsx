@@ -21,6 +21,7 @@ const Crypto = Loader(lazy(() => import('src/content/dashboards/Crypto')));
 // pages
 const SignIn = Loader(lazy(() => import('src/content/signIn/SignIn')));
 const SignUp = Loader(lazy(() => import('src/content/signUp/SignUp')));
+const ForgotPassword = Loader(lazy(() => import('src/content/ForgotPassword')));
 
 // dashboard
 const AllUsers = Loader(lazy(() => import('src/content/dashboards/Users')));
@@ -96,6 +97,14 @@ const routes = (isLoggedIn?: boolean): RouteObject[] => [
         element: (
           <AuthLayout>
             <SignUp />
+          </AuthLayout>
+        )
+      },
+      {
+        path: '/forgot-password',
+        element: (
+          <AuthLayout>
+            <ForgotPassword />
           </AuthLayout>
         )
       },
