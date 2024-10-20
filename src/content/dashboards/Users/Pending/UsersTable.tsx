@@ -105,18 +105,18 @@ const columns = (removeUser: any, verifyUser: any): GridColDef[] => [
   {
     field: 'fullName',
     headerName: 'Full Name',
-    width: 150
+    width: 250
   },
   {
     field: 'username',
     headerName: 'Username',
-    width: 150
+    width: 200
   },
 
   {
     field: 'phoneNo',
     headerName: 'Phone No',
-    width: 150
+    width: 200
   },
 
   {

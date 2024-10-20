@@ -8,7 +8,7 @@ const MakeRequest = () => {
       <Helmet>
         <title>Make a request</title>
       </Helmet>
-      <Container maxWidth="lg" sx={{ pt: 5 }}>
+      <Container maxWidth="xl" sx={{ pt: 5 }}>
         <Grid
           container
           direction="row"
