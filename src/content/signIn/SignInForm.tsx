@@ -159,7 +159,7 @@ const SignInForm = () => {
           </Stack>
         )}
         <Button type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
-          Sign Up
+          Sign In
         </Button>
       </Box>
     </>
@@ -167,17 +167,3 @@ const SignInForm = () => {
 };
 
 export default SignInForm;
-
-/*
-  <Controller
-control={control}
-name="ReactDatepicker"
-render={({ field: { onChange, onBlur, value, ref } }) => (
-  <ReactDatePicker
-    onChange={onChange} // send value to hook form
-    onBlur={onBlur} // notify when input is touched/blur
-    selected={value}
-  />
-)}
-/>
-*/

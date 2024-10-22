@@ -106,7 +106,13 @@ const ForgotPasswordForm = () => {
             <LinearProgress color="info" />
           </Stack>
         )}
-        <Button type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="info"
+          sx={{ mb: 2 }}
+        >
           Send
         </Button>
       </Box>

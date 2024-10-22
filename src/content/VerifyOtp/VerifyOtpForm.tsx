@@ -108,7 +108,13 @@ const VerifyOtpForm = () => {
             <LinearProgress color="info" />
           </Stack>
         )}
-        <Button type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="success"
+          sx={{ mb: 2 }}
+        >
           Verify
         </Button>
       </Box>

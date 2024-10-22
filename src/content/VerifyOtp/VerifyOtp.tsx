@@ -1,7 +1,4 @@
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -18,26 +15,28 @@ export default function VerifyOtp() {
       <Helmet>
         <title>Sign In </title>
       </Helmet>
-      <Grid container component="main" sx={{ height: '100vh' }}>
-        <CssBaseline />
+      <Grid
+        container
+        component="main"
+        justifyContent={'center'}
+        alignItems={'center'}
+        height={'100vh'}
+      >
         <Grid
-          item
-          xs={false}
-          sm={6}
-          md={8}
           sx={{
-            backgroundImage:
-              'url(https://source.unsplash.com/random?wallpapers)',
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light'
-                ? t.palette.grey[50]
-                : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            borderRadius: 2,
+            height: {
+              sm: '370px'
+            }
           }}
-        />
-        <Grid item xs={12} sm={6} md={4} component={Paper} elevation={6} square>
+          item
+          xs={12}
+          sm={6}
+          md={4}
+          xl={3}
+          component={Paper}
+          square
+        >
           <Box
             sx={{
               my: 8,
@@ -47,16 +46,13 @@ export default function VerifyOtp() {
               alignItems: 'center'
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography
-              component="h1"
-              variant="h4"
-              align="center"
-              color={'red'}
-            >
-              We have send you an otp on your email address
+            <Typography component="h2" variant="h4" mb={1}>
+              Verify Your Identity!
+            </Typography>
+            <Typography component="p" variant="subtitle1" align="center">
+              We sent a one-time password (OTP) to your email/phone. Enter it
+              below to verify your identity and gain access to your account.
+              Your security is our priority!
             </Typography>
             <VerifyOtpForm />
           </Box>

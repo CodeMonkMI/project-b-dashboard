@@ -1,7 +1,4 @@
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -49,26 +46,28 @@ export default function SetNewPassword() {
       <Helmet>
         <title>Sign In </title>
       </Helmet>
-      <Grid container component="main" sx={{ height: '100vh' }}>
-        <CssBaseline />
+      <Grid
+        container
+        component="main"
+        justifyContent={'center'}
+        alignItems={'center'}
+        height={'100vh'}
+      >
         <Grid
-          item
-          xs={false}
-          sm={6}
-          md={8}
           sx={{
-            backgroundImage:
-              'url(https://source.unsplash.com/random?wallpapers)',
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light'
-                ? t.palette.grey[50]
-                : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            height: {
+              sm: '450px'
+            },
+            borderRadius: 2
           }}
-        />
-        <Grid item xs={12} sm={6} md={4} component={Paper} elevation={6} square>
+          item
+          xs={12}
+          sm={6}
+          md={4}
+          xl={3}
+          component={Paper}
+          square
+        >
           <Box
             sx={{
               my: 8,
@@ -78,16 +77,13 @@ export default function SetNewPassword() {
               alignItems: 'center'
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography
-              component="h1"
-              variant="h4"
-              align="center"
-              color={'red'}
-            >
-              Set new password.
+            <Typography component="h1" variant="h5" mb={1}>
+              Update Your New Password!
+            </Typography>
+            <Typography component="p" variant="subtitle1" mb={1} align="center">
+              You’re almost there! Enter a new password below to secure your
+              account. Remember to make it strong and unique. Your security is
+              our top priority!
             </Typography>
             <SetNewPasswordForm data={dataParam} />
           </Box>
