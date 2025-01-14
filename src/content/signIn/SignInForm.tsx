@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { Alert, IconButton, InputAdornment } from '@mui/material';
@@ -13,11 +14,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import { useLoginMutation } from 'src/redux/features/auth/authApiSlice';
-// form values type
-export interface SignInFormValues {
-  username: string;
-  password: string;
-}
+import SignInSchema, { SignInFormValues, ZodSingleError } from './SignInSchema';
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -30,7 +27,9 @@ const SignInForm = () => {
     handleSubmit,
     formState: { errors },
     setError
-  } = useForm<SignInFormValues>();
+  } = useForm<SignInFormValues>({
+    resolver: zodResolver(SignInSchema)
+  });
 
   const submitHandler = (data: SignInFormValues) => {
     login(data);
@@ -41,9 +40,10 @@ const SignInForm = () => {
       console.log(error);
       if (error && 'status' in error && 'data' in error) {
         if (error.status === 400) {
-          const allErrors = error.data;
-          Object.entries(allErrors).map((item: any) => {
-            setError(item[0], { message: item[1] });
+          const allErrors: ZodSingleError[] =
+            (error as any)?.data?.errors || [];
+          allErrors.map((err) => {
+            setError(err.path[0], { message: err.message });
           });
         }
       }
@@ -54,6 +54,8 @@ const SignInForm = () => {
       navigate('/');
     }
   }, [isError, isLoading]);
+
+  console.log(errors);
 
   return (
     <>
@@ -79,13 +81,10 @@ const SignInForm = () => {
             <Controller
               control={control}
               name="username"
-              rules={{
-                required: 'Username is required'
-              }}
               render={({ field: { onChange, onBlur, value, ref } }) => (
                 <>
                   <TextField
-                    autoComplete="firstName"
+                    autoComplete="username"
                     name="username"
                     fullWidth
                     id="username"
