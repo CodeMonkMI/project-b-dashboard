@@ -24,59 +24,13 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link as RouterLink } from 'react-router-dom';
 import { useRegisterMutation } from 'src/redux/features/auth/authApiSlice';
-import { v4 } from 'uuid';
 import { z } from 'zod';
-import SignUpSchema, { BLOOD_GROUPS } from './SignSchema';
+import SignUpSchema, { ZodSingleErrorType } from './SignSchema';
+import { BLOOD_GROUP_LIST } from './data';
 
 type FormValues = z.infer<typeof SignUpSchema>;
-interface BloodListProps {
-  id: string;
-  value: string | BLOOD_GROUPS;
-  label: String;
-}
+
 // CONST VALUES
-const BLOOD_GROUP_LIST: BloodListProps[] = [
-  {
-    id: v4(),
-    label: 'A +ve',
-    value: BLOOD_GROUPS.A_POSITIVE
-  },
-  {
-    id: v4(),
-    label: 'A -ve',
-    value: BLOOD_GROUPS.A_NEGATIVE
-  },
-  {
-    id: v4(),
-    label: 'B +ve',
-    value: BLOOD_GROUPS.B_POSITIVE
-  },
-  {
-    id: v4(),
-    label: 'B -ve',
-    value: BLOOD_GROUPS.B_NEGATIVE
-  },
-  {
-    id: v4(),
-    label: 'O +ve',
-    value: BLOOD_GROUPS.O_POSITIVE
-  },
-  {
-    id: v4(),
-    label: 'O -ve',
-    value: BLOOD_GROUPS.O_NEGATIVE
-  },
-  {
-    id: v4(),
-    label: 'AB +ve',
-    value: BLOOD_GROUPS.AB_POSITIVE
-  },
-  {
-    id: v4(),
-    label: 'AB -ve',
-    value: BLOOD_GROUPS.AB_NEGATIVE
-  }
-];
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -103,9 +57,10 @@ const SignUpForm = () => {
   useEffect(() => {
     if (isError && !isLoading) {
       if (error && 'data' in error) {
-        const allErrors = error.data;
-        Object.entries(allErrors).map((item: any) => {
-          setError(item[0], { message: item[1] });
+        const allErrors: ZodSingleErrorType[] =
+          (error as any)?.data?.errors || [];
+        allErrors.map((err) => {
+          setError(err.path[0], { message: err.message });
         });
       }
     }
@@ -124,7 +79,6 @@ const SignUpForm = () => {
         onSubmit={handleSubmit(submitHandler)}
         sx={{ mt: 3 }}
       >
-        <pre>{JSON.stringify(errors, undefined, 4)}</pre>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
@@ -133,7 +87,7 @@ const SignUpForm = () => {
               fullWidth
               id="firstName"
               label="First Name"
-              {...register('firstName', { required: 'First name is required' })}
+              {...register('firstName')}
               autoFocus
               error={!!errors?.firstName}
               helperText={errors?.firstName?.message}
@@ -148,7 +102,7 @@ const SignUpForm = () => {
               id="lastName"
               label="Last Name"
               autoFocus
-              {...register('lastName', { required: 'Last name is required' })}
+              {...register('lastName')}
               error={!!errors?.lastName}
               helperText={errors?.lastName?.message}
             />
@@ -175,25 +129,21 @@ const SignUpForm = () => {
               render={({ field: { onChange, onBlur, value, ref } }) => (
                 <>
                   <FormControl fullWidth error={!!errors.blood}>
-                    <InputLabel id="blood_select_label">
-                      Blood Group{' '}
-                    </InputLabel>
+                    <InputLabel id="blood_select_label">Blood Group</InputLabel>
                     <Select
                       required
                       labelId="blood_select_label"
                       id="blood-select"
                       value={value}
                       label="Blood Group"
+                      name="bloodGroup"
                       onChange={onChange}
                       onBlur={onBlur}
                       ref={ref}
                     >
-                      {BLOOD_GROUP_LIST.map((item: BloodListProps) => (
-                        <MenuItem
-                          value={BLOOD_GROUPS[item.value]}
-                          key={item.id}
-                        >
-                          {item.label}
+                      {BLOOD_GROUP_LIST.map((item: string) => (
+                        <MenuItem value={item} key={item}>
+                          {item}
                         </MenuItem>
                       ))}
                     </Select>

@@ -19,7 +19,7 @@ const SignUpSchema: ZodType = z.object({
   lastName: z
     .string({ message: 'First is required!' })
     .min(3, { message: 'First name must be greater than 3 chars' }),
-  bloodGroup: z.nativeEnum(BLOOD_GROUPS, {
+  bloodGroup: z.string({
     message: 'Blood group must be valid!'
   }),
   password: z
@@ -30,3 +30,11 @@ const SignUpSchema: ZodType = z.object({
 });
 
 export default SignUpSchema;
+
+export type ZodSingleErrorType = {
+  code: string;
+  expected: string;
+  message: string;
+  path: string[];
+  received: string;
+};
