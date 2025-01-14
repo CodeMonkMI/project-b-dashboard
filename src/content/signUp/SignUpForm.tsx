@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import {
@@ -24,29 +25,13 @@ import { Controller, useForm } from 'react-hook-form';
 import { Link as RouterLink } from 'react-router-dom';
 import { useRegisterMutation } from 'src/redux/features/auth/authApiSlice';
 import { v4 } from 'uuid';
+import { z } from 'zod';
+import SignUpSchema, { BLOOD_GROUPS } from './SignSchema';
 
-// form values type
-enum blood_type {
-  'A_POSITIVE',
-  'A_NEGATIVE',
-  'B_POSITIVE',
-  'B_NEGATIVE',
-  'AB_POSITIVE',
-  'AB_NEGATIVE',
-  'O_POSITIVE',
-  'O_NEGATIVE'
-}
-interface FormValues {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  blood: blood_type;
-}
+type FormValues = z.infer<typeof SignUpSchema>;
 interface BloodListProps {
   id: string;
-  value: string | blood_type;
+  value: string | BLOOD_GROUPS;
   label: String;
 }
 // CONST VALUES
@@ -54,42 +39,42 @@ const BLOOD_GROUP_LIST: BloodListProps[] = [
   {
     id: v4(),
     label: 'A +ve',
-    value: blood_type.A_POSITIVE
+    value: BLOOD_GROUPS.A_POSITIVE
   },
   {
     id: v4(),
     label: 'A -ve',
-    value: blood_type.A_NEGATIVE
+    value: BLOOD_GROUPS.A_NEGATIVE
   },
   {
     id: v4(),
     label: 'B +ve',
-    value: blood_type.B_POSITIVE
+    value: BLOOD_GROUPS.B_POSITIVE
   },
   {
     id: v4(),
     label: 'B -ve',
-    value: blood_type.B_NEGATIVE
+    value: BLOOD_GROUPS.B_NEGATIVE
   },
   {
     id: v4(),
     label: 'O +ve',
-    value: blood_type.O_POSITIVE
+    value: BLOOD_GROUPS.O_POSITIVE
   },
   {
     id: v4(),
     label: 'O -ve',
-    value: blood_type.O_NEGATIVE
+    value: BLOOD_GROUPS.O_NEGATIVE
   },
   {
     id: v4(),
     label: 'AB +ve',
-    value: blood_type.AB_POSITIVE
+    value: BLOOD_GROUPS.AB_POSITIVE
   },
   {
     id: v4(),
     label: 'AB -ve',
-    value: blood_type.AB_NEGATIVE
+    value: BLOOD_GROUPS.AB_NEGATIVE
   }
 ];
 
@@ -106,9 +91,12 @@ const SignUpForm = () => {
     setError,
     reset,
     register
-  } = useForm<FormValues>();
+  } = useForm<FormValues>({
+    resolver: zodResolver(SignUpSchema)
+  });
 
   const submitHandler = (data: FormValues) => {
+    console.log(data);
     userSignUp(data);
   };
 
@@ -136,6 +124,7 @@ const SignUpForm = () => {
         onSubmit={handleSubmit(submitHandler)}
         sx={{ mt: 3 }}
       >
+        <pre>{JSON.stringify(errors, undefined, 4)}</pre>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
@@ -172,13 +161,7 @@ const SignUpForm = () => {
               fullWidth
               id="email"
               label="Email Address"
-              {...register('email', {
-                required: 'Email is required',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Email must be valid'
-                }
-              })}
+              {...register('email')}
               autoFocus
               error={!!errors?.email}
               helperText={errors?.email?.message}
@@ -188,10 +171,7 @@ const SignUpForm = () => {
           <Grid item xs={12}>
             <Controller
               control={control}
-              name="blood"
-              rules={{
-                required: 'Blood group is required!'
-              }}
+              name="bloodGroup"
               render={({ field: { onChange, onBlur, value, ref } }) => (
                 <>
                   <FormControl fullWidth error={!!errors.blood}>
@@ -209,7 +189,10 @@ const SignUpForm = () => {
                       ref={ref}
                     >
                       {BLOOD_GROUP_LIST.map((item: BloodListProps) => (
-                        <MenuItem value={blood_type[item.value]} key={item.id}>
+                        <MenuItem
+                          value={BLOOD_GROUPS[item.value]}
+                          key={item.id}
+                        >
                           {item.label}
                         </MenuItem>
                       ))}
@@ -229,17 +212,7 @@ const SignUpForm = () => {
               name="password"
               label="Password"
               type={showPassword ? 'text' : 'password'}
-              {...register('password', {
-                required: 'Password is required',
-                minLength: {
-                  value: 6,
-                  message: 'Password must be greater than 6 chars'
-                },
-                maxLength: {
-                  value: 32,
-                  message: 'Password must be lesser than 32 chars'
-                }
-              })}
+              {...register('password')}
               error={!!errors?.password}
               helperText={errors?.password?.message}
               InputProps={{
@@ -266,14 +239,7 @@ const SignUpForm = () => {
               name="confirmPassword"
               label="Confirm Password"
               type={showPassword ? 'text' : 'password'}
-              {...register('confirmPassword', {
-                required: 'Confirm Your password!',
-                validate: (confirmPassword, { password }) => {
-                  if (confirmPassword !== password)
-                    return "Password didn't match";
-                  return true;
-                }
-              })}
+              {...register('confirmPassword')}
               error={!!errors?.confirmPassword}
               helperText={errors?.confirmPassword?.message}
             />
