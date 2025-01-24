@@ -21,7 +21,7 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const result = await queryFulfilled;
-          const { token } = result.data.data;
+          const { accessToken: token } = result.data.data;
 
           storeToken(token);
 
@@ -34,8 +34,8 @@ export const authApi = apiSlice.injectEndpoints({
     }),
     getMe: builder.query<any, void>({
       query: () => ({
-        url: '/auth/me',
-        method: 'post'
+        url: '/user/me',
+        method: 'get'
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
