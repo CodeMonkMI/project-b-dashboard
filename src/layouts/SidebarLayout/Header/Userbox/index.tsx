@@ -52,16 +52,16 @@ function HeaderUserbox() {
       <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
         <Avatar
           variant="rounded"
-          alt={`${data.data.Profile.firstName} ${data.data.Profile.lastName}`}
+          alt={`${data.data.profile.firstName} ${data.data.profile.lastName}`}
           src={
-            data.data.Profile.image ||
-            `https://ui-avatars.com/api/?name=${`${data.data.Profile.firstName} ${data.data.Profile.lastName}`}&size=200`
+            data.data.profile.image ||
+            `https://ui-avatars.com/api/?name=${`${data.data.profile.firstName} ${data.data.profile.lastName}`}&size=200`
           }
         />
         <Hidden mdDown>
           <UserBoxText>
             <UserBoxLabel variant="body1">
-              {data.data.Profile.firstName} {data.data.Profile.lastName}
+              {data.data.profile.firstName} {data.data.profile.lastName}
             </UserBoxLabel>
             <UserBoxDescription variant="body2">
               {data.data.role.name}
@@ -88,15 +88,15 @@ function HeaderUserbox() {
         <MenuUserBox sx={{ minWidth: 210 }} display="flex">
           <Avatar
             variant="rounded"
-            alt={`${data.data.Profile.firstName} ${data.data.Profile.lastName}`}
+            alt={`${data.data.profile.firstName} ${data.data.profile.lastName}`}
             src={
-              data.data.Profile.image ||
-              `https://ui-avatars.com/api/?name=${`${data.data.Profile.firstName} ${data.data.Profile.lastName}`}&size=200`
+              data.data.profile.image ||
+              `https://ui-avatars.com/api/?name=${`${data.data.profile.firstName} ${data.data.profile.lastName}`}&size=200`
             }
           />
           <UserBoxText>
             <UserBoxLabel variant="body1">
-              {data.data.Profile.firstName} {data.data.Profile.lastName}
+              {data.data.profile.firstName} {data.data.profile.lastName}
             </UserBoxLabel>
             <UserBoxDescription variant="body2">
               {data.data.role.name}

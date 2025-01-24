@@ -15,7 +15,7 @@ import { styled } from '@mui/material/styles';
 import { useRef, useState } from 'react';
 
 import { formatDistance } from 'date-fns';
-import { useGetNotificationsQuery } from 'src/redux/features/notification/notificationApiSlice';
+// import { useGetNotificationsQuery } from 'src/redux/features/notification/notificationApiSlice';
 
 const NotificationsBadge = styled(Badge)(
   ({ theme }) => `
@@ -53,7 +53,9 @@ function HeaderNotifications() {
     setOpen(false);
   };
 
-  const { data, isSuccess } = useGetNotificationsQuery();
+  // const { data, isSuccess } = useGetNotificationsQuery();
+  const data = { data: [] };
+  const isSuccess = false;
 
   return (
     <>
