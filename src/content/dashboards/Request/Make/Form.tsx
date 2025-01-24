@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Grid, LinearProgress, Typography } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -12,7 +13,7 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import { useAddRequestMutation } from 'src/redux/features/request/requestApiSlice';
-import { FormValues } from './types';
+import { FormValues, MakeRequestSchema } from './types';
 
 const RequestForm = () => {
   const navigate = useNavigate();
@@ -26,16 +27,7 @@ const RequestForm = () => {
     reset,
     setError
   } = useForm<FormValues>({
-    defaultValues: {
-      phone: '',
-      blood: '',
-      email: '',
-      firstName: '',
-      lastName: '',
-      date: dayjs(new Date()).add(3, 'hours').add(15, 'minutes'),
-      address: '',
-      reason: ''
-    }
+    resolver: zodResolver(MakeRequestSchema)
   });
 
   const [
@@ -53,9 +45,8 @@ const RequestForm = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      // clearErrors();
-      // reset();
-      console.log({ responseData });
+      clearErrors();
+      reset();
     }
   }, [isSuccess]);
 
@@ -63,9 +54,10 @@ const RequestForm = () => {
     if (isError) {
       if ('status' in error) {
         const data: FormValues | {} | undefined = error.data;
-        Object.entries(data).map((item: any) => {
-          setError(item[0], { message: item[1] });
-        });
+        console.log(data);
+        // Object.entries(data).map((item: any) => {
+        //   setError(item[0], { message: item[1] });
+        // });
       }
     }
   }, [isError]);
@@ -73,6 +65,7 @@ const RequestForm = () => {
   return (
     <div>
       {isLoading && <LinearProgress color="primary" />}
+
       <form onSubmit={handleSubmit(submitHandler)}>
         <Grid container>
           <Grid xs={12} sx={{ mb: 3, mt: 3 }}>
@@ -124,7 +117,6 @@ const RequestForm = () => {
                 name="blood"
                 control={control}
                 defaultValue=""
-                rules={{ required: 'This field is required' }}
                 render={({ field }) => (
                   <>
                     <Select
@@ -160,7 +152,6 @@ const RequestForm = () => {
               minRows={1}
               fullWidth
               error={!!errors.reason}
-              required
               {...register('reason', { required: 'This field is required' })}
             />
             {errors?.reason && (
@@ -174,7 +165,6 @@ const RequestForm = () => {
               label="Address"
               variant="standard"
               fullWidth
-              required
               error={!!errors.address}
               {...register('address', { required: 'This field is required' })}
             />
@@ -189,7 +179,6 @@ const RequestForm = () => {
               label="Phone no."
               variant="standard"
               fullWidth
-              required
               error={!!errors.phone}
               {...register('phone', { required: 'This field is required' })}
             />
@@ -204,7 +193,6 @@ const RequestForm = () => {
               label="First Name"
               variant="standard"
               fullWidth
-              required
               error={!!errors.firstName}
               {...register('firstName', { required: 'This field is required' })}
             />
@@ -219,7 +207,6 @@ const RequestForm = () => {
               label="Last Name"
               variant="standard"
               fullWidth
-              required
               error={!!errors.lastName}
               {...register('lastName', { required: 'This field is required' })}
             />

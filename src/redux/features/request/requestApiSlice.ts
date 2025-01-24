@@ -40,7 +40,7 @@ export const requestApi = apiSlice.injectEndpoints({
     }),
     addRequest: builder.mutation({
       query: (data) => ({
-        url: '/donation/requested',
+        url: '/request/create',
         method: 'POST',
         body: data
       }),
