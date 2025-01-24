@@ -22,7 +22,7 @@ const RequestTable = () => {
     if (isLoading || isError) return [];
     return requestData.data
       .filter((a: REQUEST_DATA_SERVER) => {
-        return a.status === 'request';
+        return a.status === 'REQUEST';
       })
       .map((a: REQUEST_DATA_SERVER, i: number): VisibleDataTypes => {
         return {

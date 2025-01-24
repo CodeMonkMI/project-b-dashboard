@@ -4,7 +4,7 @@ export const requestApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllRequest: builder.query<any, void>({
       query: () => ({
-        url: '/donation/requested',
+        url: '/request/all',
         method: 'get',
         transformResponse: (rawResult: any) => {
           return rawResult.data.data;

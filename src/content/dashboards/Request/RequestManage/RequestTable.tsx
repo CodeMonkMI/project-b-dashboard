@@ -41,11 +41,8 @@ const RequestTable = () => {
     if (isLoading || isError) return [];
     const data: VisibleDataTypes[] = requestData.data.reduce(
       (acc: VisibleDataTypes[], cur: REQUEST_DATA_SERVER) => {
-        if (
-          cur.status === 'progress' ||
-          cur.status === 'ready' ||
-          cur.status === 'hold'
-        ) {
+        const fStatus = ['PROGRESS', 'READY', 'HOLD'];
+        if (fStatus.includes(cur.status)) {
           acc.push({
             sr: acc.length + 1,
             id: cur.id,
@@ -148,9 +145,7 @@ interface ColumnProps {
   completeRequest: any;
   deleteRequest: any;
   me: {
-    role: {
-      role: string;
-    };
+    role: string;
   };
 }
 
@@ -261,7 +256,7 @@ const columns = (props: ColumnProps): GridColDef[] => {
               <HistoryIcon />
             </IconButton>
             {/* </Link> */}
-            {me?.role?.role === 'super_admin' && (
+            {me?.role === 'super_admin' && (
               <>
                 <IconButton
                   aria-label="edit"
@@ -303,7 +298,7 @@ const columns = (props: ColumnProps): GridColDef[] => {
               <DeleteIcon />
             </IconButton>
 
-            {me?.role?.role === 'super_admin' && (
+            {me?.role === 'super_admin' && (
               <IconButton
                 disabled={params.row.status !== 'ready'}
                 aria-label="edit"

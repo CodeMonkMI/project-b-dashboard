@@ -20,7 +20,7 @@ const RequestTable = () => {
   const visibleRows: VisibleDataTypes[] = useMemo<VisibleDataTypes[]>(() => {
     if (isLoading || isError) return [];
     return requestData.data
-      .filter((a: REQUEST_DATA_SERVER) => a.status === 'completed')
+      .filter((a: REQUEST_DATA_SERVER) => a.status === 'COMPLETED')
       .map((a: REQUEST_DATA_SERVER, i: number): VisibleDataTypes => {
         return {
           sr: i + 1,
