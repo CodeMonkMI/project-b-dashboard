@@ -24,59 +24,17 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link as RouterLink } from 'react-router-dom';
 import { useRegisterMutation } from 'src/redux/features/auth/authApiSlice';
-import { v4 } from 'uuid';
 import { z } from 'zod';
 import SignUpSchema, { BLOOD_GROUPS } from './SignSchema';
 
 type FormValues = z.infer<typeof SignUpSchema>;
 interface BloodListProps {
-  id: string;
-  value: string | BLOOD_GROUPS;
-  label: String;
+  value: BLOOD_GROUPS;
 }
 // CONST VALUES
-const BLOOD_GROUP_LIST: BloodListProps[] = [
-  {
-    id: v4(),
-    label: 'A +ve',
-    value: BLOOD_GROUPS.A_POSITIVE
-  },
-  {
-    id: v4(),
-    label: 'A -ve',
-    value: BLOOD_GROUPS.A_NEGATIVE
-  },
-  {
-    id: v4(),
-    label: 'B +ve',
-    value: BLOOD_GROUPS.B_POSITIVE
-  },
-  {
-    id: v4(),
-    label: 'B -ve',
-    value: BLOOD_GROUPS.B_NEGATIVE
-  },
-  {
-    id: v4(),
-    label: 'O +ve',
-    value: BLOOD_GROUPS.O_POSITIVE
-  },
-  {
-    id: v4(),
-    label: 'O -ve',
-    value: BLOOD_GROUPS.O_NEGATIVE
-  },
-  {
-    id: v4(),
-    label: 'AB +ve',
-    value: BLOOD_GROUPS.AB_POSITIVE
-  },
-  {
-    id: v4(),
-    label: 'AB -ve',
-    value: BLOOD_GROUPS.AB_NEGATIVE
-  }
-];
+const BLOOD_GROUP_LIST: BLOOD_GROUPS[] = Object.values(BLOOD_GROUPS).map(
+  (i: BLOOD_GROUPS) => i
+);
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -90,7 +48,9 @@ const SignUpForm = () => {
     formState: { errors },
     setError,
     reset,
-    register
+    register,
+    clearErrors,
+    setValue
   } = useForm<FormValues>({
     resolver: zodResolver(SignUpSchema)
   });
@@ -113,6 +73,7 @@ const SignUpForm = () => {
   useEffect(() => {
     if (isSuccess && !isLoading) {
       reset();
+      setValue('bloodGroup', '');
     }
   }, [isError, isLoading]);
 
@@ -124,7 +85,6 @@ const SignUpForm = () => {
         onSubmit={handleSubmit(submitHandler)}
         sx={{ mt: 3 }}
       >
-        <pre>{JSON.stringify(errors, undefined, 4)}</pre>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
@@ -184,21 +144,31 @@ const SignUpForm = () => {
                       id="blood-select"
                       value={value}
                       label="Blood Group"
-                      onChange={onChange}
+                      name="bloodGroup"
+                      onChange={(...e) => {
+                        clearErrors('bloodGroup');
+                        console.log(e);
+                        setValue('bloodGroup', e[0].target.value);
+                        // onChange(...e);
+                      }}
                       onBlur={onBlur}
                       ref={ref}
+                      error={!!errors?.bloodGroup}
                     >
-                      {BLOOD_GROUP_LIST.map((item: BloodListProps) => (
+                      {BLOOD_GROUP_LIST.map((item: BLOOD_GROUPS) => (
                         <MenuItem
-                          value={BLOOD_GROUPS[item.value]}
-                          key={item.id}
+                          value={BLOOD_GROUPS[BLOOD_GROUPS[item]]}
+                          key={item}
                         >
-                          {item.label}
+                          {item}
                         </MenuItem>
                       ))}
                     </Select>
-                    <FormHelperText id="my-helper-text" error={!!errors?.blood}>
-                      {errors?.blood?.message}
+                    <FormHelperText
+                      id="my-helper-text"
+                      error={!!errors?.bloodGroup}
+                    >
+                      {errors?.bloodGroup?.message}
                     </FormHelperText>
                   </FormControl>
                 </>
