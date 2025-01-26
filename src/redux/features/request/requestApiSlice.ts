@@ -94,7 +94,7 @@ export const requestApi = apiSlice.injectEndpoints({
     }),
     approveRequest: builder.mutation({
       query: (id) => ({
-        url: `donation/requested/approve/${id}`,
+        url: `/request/approve/${id}`,
         method: 'put'
       }),
       invalidatesTags: ['getAllActivity', 'notifications'],
@@ -107,7 +107,7 @@ export const requestApi = apiSlice.injectEndpoints({
               const findRequest = draftUser.data.find(
                 (item) => item.id === arg
               );
-              findRequest.status = 'progress';
+              findRequest.status = 'PROGRESS';
             }
           )
         );
@@ -120,7 +120,7 @@ export const requestApi = apiSlice.injectEndpoints({
     }),
     declineRequest: builder.mutation({
       query: (id) => ({
-        url: `donation/requested/decline/${id}`,
+        url: `/request/decline/${id}`,
         method: 'put'
       }),
       invalidatesTags: ['getAllActivity', 'notifications'],
@@ -133,7 +133,7 @@ export const requestApi = apiSlice.injectEndpoints({
               const findRequest = draftUser.data.find(
                 (item) => item.id === arg
               );
-              findRequest.status = 'declined';
+              findRequest.status = 'DECLINED';
             }
           )
         );
