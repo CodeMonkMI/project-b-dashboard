@@ -243,6 +243,8 @@ const columns = (props: ColumnProps): GridColDef[] => {
       sortable: false,
       width: 300,
       renderCell: (params) => {
+        const requestStatus = params.row.status.toLowerCase();
+        const requestId = params.row.id;
         return (
           <Stack spacing={0.5} direction="row">
             {/* <Link to={`/dashboards/users/view/${params.row.username}`}> */}
@@ -261,8 +263,8 @@ const columns = (props: ColumnProps): GridColDef[] => {
                 <IconButton
                   aria-label="edit"
                   color="primary"
-                  disabled={params.row.status === 'progress'}
-                  onClick={() => makeProgressRequest(params.row.id)}
+                  disabled={requestStatus === 'progress'}
+                  onClick={() => makeProgressRequest(requestId)}
                 >
                   <ArrowBackIosNewIcon />
                 </IconButton>
@@ -271,10 +273,9 @@ const columns = (props: ColumnProps): GridColDef[] => {
                   aria-label="edit"
                   color="primary"
                   disabled={
-                    params.row.status !== 'progress' &&
-                    params.row.status !== 'ready'
+                    requestStatus !== 'progress' && requestStatus !== 'ready'
                   }
-                  onClick={() => assignedOpen(params.row.id)}
+                  onClick={() => assignedOpen(requestId)}
                 >
                   <PersonAddAltIcon />
                 </IconButton>
@@ -282,8 +283,8 @@ const columns = (props: ColumnProps): GridColDef[] => {
                 <IconButton
                   aria-label="edit"
                   color="secondary"
-                  onClick={() => requestHold(params.row.id)}
-                  disabled={params.row.status === 'hold'}
+                  onClick={() => requestHold(requestId)}
+                  disabled={requestStatus === 'hold'}
                 >
                   <BlockIcon />
                 </IconButton>
@@ -293,17 +294,17 @@ const columns = (props: ColumnProps): GridColDef[] => {
             <IconButton
               aria-label="edit"
               color="error"
-              onClick={() => deleteRequest(params.row.id)}
+              onClick={() => deleteRequest(requestId)}
             >
               <DeleteIcon />
             </IconButton>
 
             {me?.role === 'super_admin' && (
               <IconButton
-                disabled={params.row.status !== 'ready'}
+                disabled={requestStatus !== 'ready'}
                 aria-label="edit"
                 color="success"
-                onClick={() => completeRequest(params.row.id)}
+                onClick={() => completeRequest(requestId)}
               >
                 <CheckIcon />
               </IconButton>
