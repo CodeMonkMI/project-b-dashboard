@@ -26,7 +26,7 @@ export default function SignInSide() {
       >
         <Grid
           sx={{
-            height: {
+            minHeight: {
               sm: '490px'
             },
             borderRadius: 2

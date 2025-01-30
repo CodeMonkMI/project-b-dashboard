@@ -38,13 +38,21 @@ const SignInForm = () => {
 
   useEffect(() => {
     if (isError && !isLoading) {
-      console.log(error);
       if (error && 'status' in error && 'data' in error) {
         if (error.status === 400) {
-          const allErrors = error.data;
-          Object.entries(allErrors).map((item: any) => {
-            setError(item[0], { message: item[1] });
-          });
+          const errorData: any = error.data;
+          if (error?.data && 'errors' in errorData) {
+            const allErrors: {
+              code: string;
+              expected: string;
+              received: string;
+              path: any[];
+              message: string;
+            }[] = errorData.errors;
+            allErrors.forEach((item) => {
+              setError(item.path[0], { message: item.message });
+            });
+          }
         }
       }
     }
